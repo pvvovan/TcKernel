@@ -15,7 +15,8 @@ extern "C" void KernelCore0_Start(void)
     volatile uint32_t tim0;
     volatile uint32_t tim5;
     for( ; ; ) {
-        tim0 = STM0.TIM0;
-        tim5 = STM5.TIM0;
+        tim0 = STM0.TIM<0>();
+        tim5 = STM5.TIM<0>();
+        STM5.CMP<0>() = STM5.TIM<0>() + STM<5>::TICKS_1MS;
     }
 }
