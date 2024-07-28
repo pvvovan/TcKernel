@@ -28,6 +28,9 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelCore0.h"
+
+
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
 void core0_main(void)
@@ -44,7 +47,7 @@ void core0_main(void)
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
     
-    
+    KernelCore0_Start();
     while(1)
     {
     }
