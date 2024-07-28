@@ -11,12 +11,8 @@
 extern "C" void KernelCore0_Start(void)
 {
     STM<0> STM0 = STM<0>();
-    STM<5> STM5 = STM<5>();
-    volatile uint32_t tim0;
-    volatile uint32_t tim5;
+    STM0.EnableSysIrq();
     for( ; ; ) {
-        tim0 = STM0.TIM<0>();
-        tim5 = STM5.TIM<0>();
-        STM5.CMP<0>() = STM5.TIM<0>() + STM<5>::TICKS_1MS;
+        STM0.HandleIsr();
     }
 }
