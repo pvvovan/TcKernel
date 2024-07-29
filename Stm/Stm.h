@@ -57,7 +57,7 @@ class STM final
     volatile uint32_t& OCS {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0xE8)};
     const uint32_t OCS_SUS {2uL << 24}; /* 2H 64-bit counter will be stopped */
 
-    void EnableSysIrq() {
+    void EnableIrq() {
         this->CMP<0>() = this->TIM<0>() + TICKS_1MS;
         this->CMCON = CMCON_MSIZE0; /* Compare Register Size for CMP0 */
         this->ICR = ICR_CMP0EN; /* Enable interrupt on compare match with CMP0 */

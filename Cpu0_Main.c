@@ -37,21 +37,18 @@ IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 void core0_main(void)
 {
     IfxCpu_enableInterrupts();
-    
+
     /* !!WATCHDOG0 AND SAFETY WATCHDOG ARE DISABLED HERE!!
-     * Enable the watchdogs and service them periodically if it is required
-     */
+     * Enable the watchdogs and service them periodically if it is required */
     IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
     IfxScuWdt_disableSafetyWatchdog(IfxScuWdt_getSafetyWatchdogPassword());
-    
+
     /* Wait for CPU sync event */
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
-    
+
     KernelCore0_Start();
-    while(1)
-    {
-    }
+    for(;;);
 }
 
 void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB0) Stm0SysIsr(void)
