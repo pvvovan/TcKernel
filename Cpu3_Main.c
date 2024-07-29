@@ -30,20 +30,26 @@
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
+volatile uint32 g_Slave3Ready = 0;
+extern volatile uint32 g_MasterReady;
+
 void core3_main(void)
 {
     IfxCpu_enableInterrupts();
-    
+
     /* !!WATCHDOG3 IS DISABLED HERE!!
-     * Enable the watchdog and service it periodically if it is required
-     */
+     * Enable the watchdog and service it periodically if it is required */
     IfxScuWdt_disableCpuWatchdog(IfxScuWdt_getCpuWatchdogPassword());
-    
+
     /* Wait for CPU sync event */
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
-    
-    while(1)
-    {
+
+    g_Slave3Ready = 1;
+    __asm("DSYNC");
+    while (!g_MasterReady) {
+        /* Wait for master core */
     }
+
+    for(;;);
 }

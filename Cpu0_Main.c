@@ -34,6 +34,13 @@
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
 
+volatile uint32 g_MasterReady = 0;
+volatile extern uint32 g_Slave1Ready;
+volatile extern uint32 g_Slave2Ready;
+volatile extern uint32 g_Slave3Ready;
+volatile extern uint32 g_Slave4Ready;
+volatile extern uint32 g_Slave5Ready;
+
 void core0_main(void)
 {
     IfxCpu_enableInterrupts();
@@ -46,6 +53,12 @@ void core0_main(void)
     /* Wait for CPU sync event */
     IfxCpu_emitEvent(&g_cpuSyncEvent);
     IfxCpu_waitEvent(&g_cpuSyncEvent, 1);
+
+    g_MasterReady = 1;
+    __asm("DSYNC");
+    while (!g_Slave1Ready || !g_Slave2Ready || !g_Slave3Ready || !g_Slave4Ready || !g_Slave5Ready) {
+        /* Wait for all slave cores */
+    }
 
     KernelCore0_Start();
     for(;;);
