@@ -16,12 +16,8 @@ template<uint16_t offset>
 class SRC
 {
     private:
-        const uint32_t SRC_BASE {0xF0038000uL};
+        const uint32_t BASE {0xF0038000uL};
         static_assert(offset <= 0x00FD0u, "Service Request Control Register is out of range");
-
-
-    protected:
-        uint32_t const reg_base {SRC_BASE + offset};
 
 
     public:
@@ -35,7 +31,10 @@ class SRC
             CPU5 = 6
         };
 
+        SRC() = default;
         virtual ~SRC() = default;
+
+        SRC(uint32_t instance) : Reg {*reinterpret_cast<Bits *>(BASE + offset + instance)} { }
 
         struct Bits {
             uint8_t SRPN    : 8; /* Service Request Priority Number */
@@ -55,7 +54,7 @@ class SRC
             uint8_t         : 1; /* Reserved */
         };
 
-        volatile struct Bits &Reg {*reinterpret_cast<Bits *>(SRC_BASE + offset)};
+        volatile struct Bits &Reg {*reinterpret_cast<Bits *>(BASE + offset)};
 
         void EnableService(uint8_t prio, SRC_TOS tos) {
             this->Reg.CLRR = 1; /* Clear Service Request */
@@ -73,7 +72,7 @@ class SRC_STMxSRy final : public SRC<0x00300u>
         static_assert(y < 2, "STM SRy not available");
 
     public:
-        volatile struct Bits &Reg {*reinterpret_cast<Bits *>(reg_base + x * 8 + y * 4)};
+        SRC_STMxSRy() : SRC(x * 8 + y * 4) { }
 };
 
 #endif /* SRC_SRC_H_ */
