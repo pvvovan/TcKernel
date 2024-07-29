@@ -28,6 +28,9 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelCore1.h"
+#include "Kernel.h"
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 volatile uint32 g_Slave1Ready = 0;
@@ -51,5 +54,11 @@ void core1_main(void)
         /* Wait for master core */
     }
 
+    KernelCore1_Start();
     for(;;);
+}
+
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB1) Stm1SysIsr(void)
+{
+    KernelCore1_SysIsr();
 }
