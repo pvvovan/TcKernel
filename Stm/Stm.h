@@ -55,13 +55,14 @@ class STM final
 
     /* OCDS Control and Status Register */
     volatile uint32_t& OCS {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0xE8)};
-    const uint32_t OCS_SUS {2uL << 24}; /* 2H 64-bit counter will be stopped */
+    const uint32_t OCS_SUS   {2uL << 24}; /* 2H 64-bit counter will be stopped */
+    const uint32_t OCS_SUS_P {1uL << 28}; /* SUS is only written when SUS_P is 1, otherwise unchanged. Read as 0 */
 
     void EnableIrq() {
         this->CMP<0>() = this->TIM<0>() + TICKS_1MS;
         this->CMCON = CMCON_MSIZE0; /* Compare Register Size for CMP0 */
         this->ICR = ICR_CMP0EN; /* Enable interrupt on compare match with CMP0 */
-        this->OCS = OCS_SUS; /* OCDS Suspend Control */
+        this->OCS = OCS_SUS | OCS_SUS_P; /* OCDS Suspend Control */
         this->ISCR = ISCR_CMP0IRR; /* Reset Compare Register CMP0 Interrupt Flag */
     }
 
