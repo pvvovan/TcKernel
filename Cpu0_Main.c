@@ -29,6 +29,7 @@
 #include "IfxScuWdt.h"
 
 #include "KernelCore0.h"
+#include "Kernel.h"
 
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
@@ -51,4 +52,9 @@ void core0_main(void)
     while(1)
     {
     }
+}
+
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB0) Stm0SysIsr(void)
+{
+    KernelCore0_SysIsr();
 }

@@ -8,6 +8,7 @@
 #include "KernelCore0.h"
 #include "Stm.h"
 
+
 extern "C" void KernelCore0_Start(void)
 {
     STM<0> STM0 = STM<0>();
@@ -15,4 +16,9 @@ extern "C" void KernelCore0_Start(void)
     for( ; ; ) {
         STM0.HandleIsr();
     }
+}
+
+extern "C" void KernelCore0_SysIsr(void)
+{
+
 }
