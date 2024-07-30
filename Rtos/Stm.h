@@ -1,12 +1,5 @@
-/*
- * Stm.h
- *
- *  Created on: Jul 28, 2024
- *      Author: pvvov
- */
-
-#ifndef STM_STM_H_
-#define STM_STM_H_
+#ifndef RTOS_STM_H_
+#define RTOS_STM_H_
 
 #include <stdint.h>
 #include <type_traits>
@@ -72,4 +65,4 @@ class STM final
     }
 };
 
-#endif /* STM_STM_H_ */
+#endif /* RTOS_STM_H_ */

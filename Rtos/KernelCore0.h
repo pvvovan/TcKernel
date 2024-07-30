@@ -1,10 +1,3 @@
-/*
- * KernelCore0.h
- *
- *  Created on: Jul 28, 2024
- *      Author: pvvov
- */
-
 #ifndef RTOS_KERNELCORE0_H_
 #define RTOS_KERNELCORE0_H_
 

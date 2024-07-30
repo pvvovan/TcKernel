@@ -1,17 +1,10 @@
-/*
- * KernelCore1.cpp
- *
- *  Created on: Jul 29, 2024
- *      Author: pvvov
- */
-
 #include "Port/Io/IfxPort_Io.h"
 #include "IfxPort_PinMap.h"
-#include <Src.h>
+
 #include "KernelCore1.h"
 #include "Kernel.h"
-#include "Stm.h"
 #include "Src.h"
+#include "Stm.h"
 
 
 typedef SRC_STMxSRy<1, 0> SRC_STM1SR0_t;
@@ -25,7 +18,7 @@ extern "C" void KernelCore1_SysIsr(void)
     systicks++;
 }
 
-void delay_c1_ms(uint32_t ms)
+static inline void delay_c1_ms(uint32_t ms)
 {
     const uint32_t entry_ticks = systicks;
     while (systicks - entry_ticks < ms) {

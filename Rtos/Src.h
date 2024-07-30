@@ -1,12 +1,5 @@
-/*
- * SRC.h
- *
- *  Created on: Jul 29, 2024
- *      Author: pvvov
- */
-
-#ifndef SRC_SRC_H_
-#define SRC_SRC_H_
+#ifndef RTOS_SRC_H_
+#define RTOS_SRC_H_
 
 
 #include <stdint.h>
@@ -75,4 +68,4 @@ class SRC_STMxSRy final : public SRC<0x00300u>
         SRC_STMxSRy() : SRC(x * 8 + y * 4) { }
 };
 
-#endif /* SRC_SRC_H_ */
+#endif /* RTOS_SRC_H_ */

@@ -1152,27 +1152,33 @@ derivative tc39
                 {
                     select ".data.Ifx_Ssw_Tc2.*";
                     select ".data.Cpu2_Main.*";
+                    select ".data.KernelCore2.*";
                     select "(.data.data_cpu2|.data.data_cpu2.*)";
                     select ".bss.Ifx_Ssw_Tc2.*";
                     select ".bss.Cpu2_Main.*";
+                    select ".bss.KernelCore2.*";
                     select "(.bss.bss_cpu2|.bss.bss_cpu2.*)";
                 }
                 group (ordered, attributes=rw, run_addr=mem:dsram1)
                 {
                     select ".data.Ifx_Ssw_Tc1.*";
                     select ".data.Cpu1_Main.*";
+                    select ".data.KernelCore1.*";
                     select "(.data.data_cpu1|.data.data_cpu1.*)";
                     select ".bss.Ifx_Ssw_Tc1.*";
                     select ".bss.Cpu1_Main.*";
+                    select ".bss.KernelCore1.*";
                     select "(.bss.bss_cpu1|.bss.bss_cpu1.*)";
                 }
                 group (ordered, attributes=rw, run_addr=mem:dsram0)
                 {
                     select ".data.Ifx_Ssw_Tc0.*";
                     select ".data.Cpu0_Main.*";
+                    select ".data.KernelCore0.*";
                     select "(.data.data_cpu0|.data.data_cpu0.*)";
                     select ".bss.Ifx_Ssw_Tc0.*";
                     select ".bss.Cpu0_Main.*";
+                    select ".bss.KernelCore0.*";
                     select "(.bss.bss_cpu0|.bss.bss_cpu0.*)";
                 }
             }

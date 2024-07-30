@@ -1,10 +1,3 @@
-/*
- * Kernel.h
- *
- *  Created on: Jul 29, 2024
- *      Author: pvvov
- */
-
 #ifndef RTOS_KERNEL_H_
 #define RTOS_KERNEL_H_
 

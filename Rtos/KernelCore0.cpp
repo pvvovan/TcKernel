@@ -1,17 +1,10 @@
-/*
- * KernelCore0.cpp
- *
- *  Created on: Jul 28, 2024
- *      Author: pvvov
- */
-
 #include "Port/Io/IfxPort_Io.h"
 #include "IfxPort_PinMap.h"
-#include <Src.h>
+
 #include "KernelCore0.h"
 #include "Kernel.h"
-#include "Stm.h"
 #include "Src.h"
+#include "Stm.h"
 
 
 typedef SRC_STMxSRy<0, 0> SRC_STM0SR0_t;
@@ -25,7 +18,7 @@ extern "C" void KernelCore0_SysIsr(void)
     systicks++;
 }
 
-void delay_c0_ms(uint32_t ms)
+static inline void delay_c0_ms(uint32_t ms)
 {
     const uint32_t entry_ticks = systicks;
     while (systicks - entry_ticks < ms) {
