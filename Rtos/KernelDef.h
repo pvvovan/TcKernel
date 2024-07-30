@@ -1,5 +1,5 @@
-#ifndef RTOS_KERNEL_H_
-#define RTOS_KERNEL_H_
+#ifndef RTOS_KERNELDEF_H_
+#define RTOS_KERNELDEF_H_
 
 #define SYS_IRQ_PRIO    50
 
@@ -10,4 +10,4 @@
 #define VEC_TAB4     4
 #define VEC_TAB5     5
 
-#endif /* RTOS_KERNEL_H_ */
+#endif /* RTOS_KERNELDEF_H_ */

@@ -28,8 +28,8 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelDef.h"
 #include "KernelCore1.h"
-#include "Kernel.h"
 
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 

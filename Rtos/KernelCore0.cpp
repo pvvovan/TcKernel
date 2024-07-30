@@ -1,8 +1,8 @@
 #include "Port/Io/IfxPort_Io.h"
 #include "IfxPort_PinMap.h"
 
+#include "KernelDef.h"
 #include "KernelCore0.h"
-#include "Kernel.h"
 #include "Src.h"
 #include "Stm.h"
 

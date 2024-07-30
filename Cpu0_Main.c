@@ -28,8 +28,8 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelDef.h"
 #include "KernelCore0.h"
-#include "Kernel.h"
 
 
 IFX_ALIGN(4) IfxCpu_syncEvent g_cpuSyncEvent = 0;
