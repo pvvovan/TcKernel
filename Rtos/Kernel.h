@@ -10,8 +10,9 @@ class Kernel final {
         void StartRtos() {
             __asm("DISABLE");
             __asm("DSYNC");
-            uint32_t lower_csa = *(task_tail->top_of_stack);
-            task_tail->top_of_stack++;
+            task_curr = task_tail;
+            uint32_t lower_csa = *(task_curr->top_of_stack);
+            task_curr->top_of_stack++;
 
             __asm("MTCR    #0xFE00, %0" /* PCXI */
                     :
@@ -43,13 +44,23 @@ class Kernel final {
             task_tail = task;
         }
 
-        void SysIsr() {
-
+        void SysIsr(const uint32_t isr_cdc) {
+            task_curr->SaveContext(isr_cdc);
+            ScheduleTask();
+            task_curr->LoadContext(isr_cdc);
         }
 
 
     private:
         TaskBase *task_tail {nullptr};
+        TaskBase *task_curr {nullptr};
+
+        void ScheduleTask() {
+            task_curr = task_curr->next;
+            if (task_curr == nullptr) {
+                task_curr = task_tail;
+            }
+        }
 };
 
 #endif /* RTOS_KERNEL_H_ */

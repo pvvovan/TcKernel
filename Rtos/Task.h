@@ -10,8 +10,10 @@
 
 #include <stdint.h>
 
+
 class TaskBase {
     public:
+        static const uint32_t CDC_MSK {0x7F};
         uint32_t *top_of_stack;
         TaskBase(uint32_t *stack_top) : top_of_stack{stack_top} { }
         TaskBase *next {nullptr};
@@ -21,6 +23,65 @@ class TaskBase {
         TaskBase(TaskBase&&) = delete;
         TaskBase& operator=(const TaskBase&) = delete;
         TaskBase& operator=(TaskBase&&) = delete;
+
+        void SaveContext(const uint32_t isr_cdc) {
+            __asm("DSYNC");
+            uint32_t cdc;
+            __asm("MFCR    %0, #0xFE04" /* PSW */
+                    : "=d" (cdc)
+                    :
+                    : );
+            cdc &= CDC_MSK;
+            const uint32_t call_depth = cdc - isr_cdc + 2;
+
+            uint32_t lower_csa;
+            __asm("MFCR    %0, #0xFE00" /* PCXI */
+                    : "=d" (lower_csa)
+                    :
+                    : );
+            uint32_t *p_csa = csa_to_address(lower_csa);
+            for (uint32_t i = 0; i < call_depth; i++) {
+                p_csa = csa_to_address(p_csa[0]);
+            }
+            lower_csa = p_csa[0];
+            uint32_t *p_lower_csa = csa_to_address(lower_csa);
+            uint32_t *p_upper_csa = csa_to_address(p_lower_csa[0]);
+            this->top_of_stack = reinterpret_cast<uint32_t *>(p_upper_csa[2]);
+            this->top_of_stack--;
+            *this->top_of_stack = lower_csa;
+        }
+
+        void LoadContext(const uint32_t isr_cdc) {
+            __asm("DSYNC");
+            uint32_t new_lower_csa = *this->top_of_stack;
+
+            uint32_t cdc;
+            __asm("MFCR    %0, #0xFE04" /* PSW */
+                    : "=d" (cdc)
+                    :
+                    : );
+            cdc &= CDC_MSK;
+            const uint32_t call_depth = cdc - isr_cdc + 2;
+
+            this->top_of_stack++;
+            uint32_t lower_csa;
+            __asm("MFCR    %0, #0xFE00" /* PCXI */
+                    : "=d" (lower_csa)
+                    :
+                    : );
+            uint32_t *p_csa = csa_to_address(lower_csa);
+            for (uint32_t i = 0; i < call_depth; i++) {
+                p_csa = csa_to_address(p_csa[0]);
+            }
+            p_csa[0] = new_lower_csa;
+        }
+
+        uint32_t * csa_to_address(uint32_t csa) {
+            uint32_t csa_addr = (csa & 0xFFFFuL) << 6;
+            uint32_t segment = ((csa >> 16) & 0xFu) << 28;
+            csa_addr |= segment;
+            return reinterpret_cast<uint32_t *>(csa_addr);
+        }
 };
 
 template<uint32_t stack_size>
@@ -73,12 +134,6 @@ class Task final : public TaskBase {
             *top_of_stack = lower_csa;
         }
 
-        uint32_t * csa_to_address(uint32_t csa) {
-            uint32_t csa_addr = (csa & 0xFFFFuL) << 6;
-            uint32_t segment = ((csa >> 16) & 0xFu) << 28;
-            csa_addr |= segment;
-            return reinterpret_cast<uint32_t *>(csa_addr);
-        }
 
     public:
         Task(void (*entry)(void)) : TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1])) {
