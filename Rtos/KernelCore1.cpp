@@ -18,7 +18,7 @@ extern "C" void KernelCore1_SysIsr(void)
     systicks++;
 }
 
-static inline void delay_c1_ms(uint32_t ms)
+static void delay_c1_ms(uint32_t ms)
 {
     const uint32_t entry_ticks = systicks;
     while (systicks - entry_ticks < ms) {
