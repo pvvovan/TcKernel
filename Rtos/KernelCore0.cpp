@@ -16,14 +16,8 @@ static Kernel kernel0 = Kernel();
 static volatile uint32_t systicks = 0;
 extern "C" void KernelCore0_SysIsr(void)
 {
-    uint32_t isr_cdc;
-    __asm("MFCR    %0, #0xFE04" /* PSW */
-            : "=d" (isr_cdc)
-            :
-            : );
-    isr_cdc &= TaskBase::CDC_MSK;
     STM0.Isr();
-    kernel0.SysIsr(isr_cdc);
+    kernel0.SysIsr();
     systicks++;
 }
 

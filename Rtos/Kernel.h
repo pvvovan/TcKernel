@@ -10,9 +10,8 @@ class Kernel final {
         void StartRtos() {
             __asm("DISABLE");
             __asm("DSYNC");
-            task_curr = task_tail;
-            uint32_t lower_csa = *(task_curr->top_of_stack);
-            task_curr->top_of_stack++;
+            uint32_t lower_csa = *(all_tasks[task_num]->top_of_stack);
+            all_tasks[task_num]->top_of_stack++;
 
             __asm("MTCR    #0xFE00, %0" /* PCXI */
                     :
@@ -40,25 +39,26 @@ class Kernel final {
         }
 
         void AddTask(TaskBase *task) {
-            task->next = task_tail;
-            task_tail = task;
+            all_tasks[task_count++] = task;
         }
 
-        void SysIsr(const uint32_t isr_cdc) {
-            task_curr->SaveContext(isr_cdc);
+        void SysIsr() {
+            const uint32_t CALL_DEPTH {1};
+            all_tasks[task_num]->SaveContext(CALL_DEPTH);
             ScheduleTask();
-            task_curr->LoadContext(isr_cdc);
+            all_tasks[task_num]->LoadContext(CALL_DEPTH);
         }
 
 
     private:
-        TaskBase *task_tail {nullptr};
-        TaskBase *task_curr {nullptr};
+        TaskBase *all_tasks[10];
+        uint32_t task_count {0};
+        uint32_t task_num {0};
 
         void ScheduleTask() {
-            task_curr = task_curr->next;
-            if (task_curr == nullptr) {
-                task_curr = task_tail;
+            task_num++;
+            if (task_num >= task_count) {
+                task_num = 0;
             }
         }
 };

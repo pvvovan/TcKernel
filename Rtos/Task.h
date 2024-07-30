@@ -24,23 +24,15 @@ class TaskBase {
         TaskBase& operator=(const TaskBase&) = delete;
         TaskBase& operator=(TaskBase&&) = delete;
 
-        void SaveContext(const uint32_t isr_cdc) {
+        void SaveContext(uint32_t depth) {
             __asm("DSYNC");
-            uint32_t cdc;
-            __asm("MFCR    %0, #0xFE04" /* PSW */
-                    : "=d" (cdc)
-                    :
-                    : );
-            cdc &= CDC_MSK;
-            const uint32_t call_depth = cdc - isr_cdc + 2;
-
             uint32_t lower_csa;
             __asm("MFCR    %0, #0xFE00" /* PCXI */
                     : "=d" (lower_csa)
                     :
                     : );
             uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < call_depth; i++) {
+            for (uint32_t i = 0; i < (depth - 1); i++) {
                 p_csa = csa_to_address(p_csa[0]);
             }
             lower_csa = p_csa[0];
@@ -51,26 +43,18 @@ class TaskBase {
             *this->top_of_stack = lower_csa;
         }
 
-        void LoadContext(const uint32_t isr_cdc) {
+        void LoadContext(uint32_t depth) {
             __asm("DSYNC");
             uint32_t new_lower_csa = *this->top_of_stack;
-
-            uint32_t cdc;
-            __asm("MFCR    %0, #0xFE04" /* PSW */
-                    : "=d" (cdc)
-                    :
-                    : );
-            cdc &= CDC_MSK;
-            const uint32_t call_depth = cdc - isr_cdc + 2;
-
             this->top_of_stack++;
+
             uint32_t lower_csa;
             __asm("MFCR    %0, #0xFE00" /* PCXI */
                     : "=d" (lower_csa)
                     :
                     : );
             uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < call_depth; i++) {
+            for (uint32_t i = 0; i < (depth - 1); i++) {
                 p_csa = csa_to_address(p_csa[0]);
             }
             p_csa[0] = new_lower_csa;
@@ -95,7 +79,7 @@ class Task final : public TaskBase {
             for(;;);
         }
 
-        void init() {
+        void init_stack() {
             __asm("DISABLE");
             __asm("DSYNC");
 
@@ -138,7 +122,7 @@ class Task final : public TaskBase {
     public:
         Task(void (*entry)(void)) : TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1])) {
             this->entry = entry;
-            init();
+            init_stack();
         }
         ~Task() override = default;
         Task() = delete;
