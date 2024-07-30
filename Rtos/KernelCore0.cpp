@@ -3,18 +3,20 @@
 
 #include "KernelDef.h"
 #include "KernelCore0.h"
+#include "Kernel.h"
 #include "Src.h"
 #include "Stm.h"
 
 
 typedef SRC_STMxSRy<0, 0> SRC_STM0SR0_t;
 static STM<0> STM0 = STM<0>();
-
+static Kernel kernel0 = Kernel();
 static volatile uint32_t systicks = 0;
 
 extern "C" void KernelCore0_SysIsr(void)
 {
-    STM0.HandleIsr();
+    STM0.Isr();
+    kernel0.SysIsr();
     systicks++;
 }
 
@@ -26,7 +28,7 @@ static inline void delay_c0_ms(uint32_t ms)
     }
 }
 
-static void task_c0_blink(void)
+static void task_c0_blink()
 {
     IfxPort_setPinMode(IfxPort_P33_4.port, IfxPort_P33_4.pinIndex, IfxPort_Mode_outputPushPullGeneral);
     for ( ; ; ) {
@@ -35,12 +37,20 @@ static void task_c0_blink(void)
     }
 }
 
+static void task1_c0_entry()
+{
+    task_c0_blink();
+    for(;;);
+}
+
 extern "C" void KernelCore0_Start(void)
 {
     SRC_STM0SR0_t SRC_STM0SR0 = SRC_STM0SR0_t();
     SRC_STM0SR0.EnableService(SYS_IRQ_PRIO, SRC_STM0SR0_t::SRC_TOS::CPU0);
 
+    kernel0.CreateTask(&task1_c0_entry);
     STM0.EnableIrq();
-    task_c0_blink();
+    kernel0.StartRtos();
+
     for( ; ; ) { }
 }

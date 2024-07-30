@@ -14,7 +14,7 @@ static volatile uint32_t systicks = 0;
 
 extern "C" void KernelCore1_SysIsr(void)
 {
-    STM1.HandleIsr();
+    STM1.Isr();
     systicks++;
 }
 

@@ -59,7 +59,7 @@ class STM final
         this->ISCR = ISCR_CMP0IRR; /* Reset Compare Register CMP0 Interrupt Flag */
     }
 
-    void HandleIsr() {
+    void Isr() {
         this->ISCR = ISCR_CMP0IRR; /* Reset Compare Register CMP0 Interrupt Flag */
         this->CMP<0>() += TICKS_1MS;
     }
