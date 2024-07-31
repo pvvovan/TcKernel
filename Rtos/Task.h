@@ -1,10 +1,3 @@
-/*
- * Task.h
- *
- *  Created on: Jul 30, 2024
- *      Author: pvvov
- */
-
 #ifndef RTOS_TASK_H_
 #define RTOS_TASK_H_
 
@@ -75,7 +68,7 @@ class TaskBase {
         void LoadContext() {
             __asm("DSYNC");
             uint32_t loaded_lower_csa = *this->top_of_stack;
-            this->top_of_stack++;
+            this->top_of_stack++; /* Now it points to A[10] (SP) */
 
             uint32_t call_depth;
             __asm("MFCR    %0, #0xFE04" /* PSW Program Status Word */
@@ -119,43 +112,52 @@ class Task final : public TaskBase {
             __asm("DSYNC");
 
             uint32_t lower_csa;
+            /* The Free CSA List Head Pointer (FCX) register holds the free CSA list head pointer.
+             * This always points to an available CSA */
             __asm("MFCR    %0, #0xFE38" /* FCX */
                     : "=d" (lower_csa)
                     :
                     : );
 
+            /* Upper CSA is linked through a Link Word */
             uint32_t *p_lower_csa = csa_to_address(lower_csa);
             uint32_t upper_csa = p_lower_csa[0];
             uint32_t *p_upper_csa = csa_to_address(upper_csa);
 
-            __asm("MTCR    #0xFE38, %0" /* FCX */
+            /* Consume two CSAs from the free CSA list */
+            __asm("MTCR    #0xFE38, %0" /* Free CSA List Head Pointer (FCX) */
                     :
                     : "d" (p_upper_csa[0])
                     : );
             __asm("ISYNC");
             __asm("ENABLE");
 
-            /* Upper Context */
-            const uint32_t INITIAL_PSW = 0x000008FFuL;
-            const uint32_t INITIAL_UPPER_PCXI = 0x00200000uL;
+            /* Prepare Upper Context */
+            const uint32_t PSW_IO {2uL << 10}; /* Supervisor mode */
+            const uint32_t PSW_CDE {1uL << 7}; /* Enable call depth counter */
+            const uint32_t INITIAL_PSW {PSW_IO | PSW_CDE};
+            const uint32_t INITIAL_UPPER_PCXI {1uL << 21}; /* Previous Interrupt Enable */
             p_upper_csa[2] = reinterpret_cast<uint32_t>(top_of_stack); /* A10; Stack Pointer */
-            p_upper_csa[1] = INITIAL_PSW;    /* PSW */
+            p_upper_csa[1] = INITIAL_PSW;
             p_upper_csa[0] = INITIAL_UPPER_PCXI;
 
-            /* Lower Context */
-            const uint32_t INITIAL_LOWER_PCXI = 0x00300000uL;
-            p_lower_csa[8] = reinterpret_cast<uint32_t>(entry); /* A4; Function Parameter Register */
-            p_lower_csa[1] = reinterpret_cast<uint32_t>(Task::run); /* A11; Return Address RA */
-            p_lower_csa[0] = INITIAL_LOWER_PCXI | upper_csa; /* PCXI pointing to the Upper context */
+            /* Prepare Lower Context */
+            const uint32_t PCXI_PIE {1uL << 21}; /* Previous Interrupt Enable */
+            const uint32_t PCXI_UL {1uL << 20}; /* Upper Context Tag */
+            const uint32_t INITIAL_LOWER_PCXI {PCXI_PIE | PCXI_UL};
+            p_lower_csa[8] = reinterpret_cast<uint32_t>(entry); // A4 Function Parameter Register
+            p_lower_csa[1] = reinterpret_cast<uint32_t>(&Task::run); /* A11; Return Address RA */
+            p_lower_csa[0] = INITIAL_LOWER_PCXI | upper_csa; /* PCXI pointing to Upper context */
 
-            /* Save the link to the CSA to the top of stack */
+            /* Save the link to the CSA on the top of stack */
             top_of_stack--;
             *top_of_stack = lower_csa;
         }
 
 
     public:
-        Task(void (*entry)(void)) : TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1])) {
+        Task(void (*entry)(void)) : TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1]))
+        {
             this->entry = entry;
             init_stack();
         }

@@ -1,7 +1,6 @@
 #ifndef RTOS_SRC_H_
 #define RTOS_SRC_H_
 
-
 #include <stdint.h>
 
 /* Service Request Control Register */
