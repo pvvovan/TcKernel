@@ -30,7 +30,7 @@ static void delay_c1_ms(uint32_t ms)
     }
 }
 
-static void task_c1_blink(void)
+static void task1_c1_blink(void)
 {
     IfxPort_setPinMode(IfxPort_P33_6.port, IfxPort_P33_6.pinIndex, IfxPort_Mode_outputPushPullGeneral);
     for ( ; ; ) {
@@ -39,14 +39,36 @@ static void task_c1_blink(void)
     }
 }
 
-static Task<256> task0(&task_c1_blink);
+static void task2_c1_blink(void)
+{
+    IfxPort_setPinMode(IfxPort_P33_7.port, IfxPort_P33_7.pinIndex, IfxPort_Mode_outputPushPullGeneral);
+    for ( ; ; ) {
+        delay_c1_ms(1000);
+        IfxPort_setPinState(IfxPort_P33_7.port, IfxPort_P33_7.pinIndex, IfxPort_State_toggled);
+    }
+}
+
+static void task3_c1_blink(void)
+{
+    IfxPort_setPinMode(IfxPort_P20_11.port, IfxPort_P20_11.pinIndex, IfxPort_Mode_outputPushPullGeneral);
+    for ( ; ; ) {
+        delay_c1_ms(167);
+        IfxPort_setPinState(IfxPort_P20_11.port, IfxPort_P20_11.pinIndex, IfxPort_State_toggled);
+    }
+}
+
+static Task<256> task1(&task1_c1_blink);
+static Task<256> task2(&task2_c1_blink);
+static Task<256> task3(&task3_c1_blink);
 
 extern "C" void KernelCore1_Start(void)
 {
     SRC_STM1SR0_t SRC_STM1SR0 = SRC_STM1SR0_t();
     SRC_STM1SR0.EnableService(SYS_IRQ_PRIO, SRC_STM1SR0_t::SRC_TOS::CPU1);
 
-    kernel_one.AddTask(&task0);
+    kernel_one.AddTask(&task1);
+    kernel_one.AddTask(&task2);
+    kernel_one.AddTask(&task3);
     STM1.EnableIrq();
     kernel_one.StartRtos();
 
