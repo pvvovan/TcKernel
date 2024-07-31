@@ -145,7 +145,7 @@ class Task final : public TaskBase {
             const uint32_t PCXI_PIE {1uL << 21}; /* Previous Interrupt Enable */
             const uint32_t PCXI_UL {1uL << 20}; /* Upper Context Tag */
             const uint32_t INITIAL_LOWER_PCXI {PCXI_PIE | PCXI_UL};
-            p_lower_csa[8] = reinterpret_cast<uint32_t>(entry); // A4 Function Parameter Register
+            p_lower_csa[8] = reinterpret_cast<uint32_t>(entry); // A4; Function Parameter Register
             p_lower_csa[1] = reinterpret_cast<uint32_t>(&Task::run); /* A11; Return Address RA */
             p_lower_csa[0] = INITIAL_LOWER_PCXI | upper_csa; /* PCXI pointing to Upper context */
 
