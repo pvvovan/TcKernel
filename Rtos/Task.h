@@ -12,59 +12,94 @@
 
 
 class TaskBase {
-    public:
-        static const uint32_t CDC_MSK {0x7F};
-        uint32_t *top_of_stack;
-        TaskBase(uint32_t *stack_top) : top_of_stack{stack_top} { }
-        TaskBase *next {nullptr};
-        virtual ~TaskBase() = default;
-        TaskBase() = delete;
-        TaskBase(const TaskBase&) = delete;
-        TaskBase(TaskBase&&) = delete;
-        TaskBase& operator=(const TaskBase&) = delete;
-        TaskBase& operator=(TaskBase&&) = delete;
+    private:
+        const uint32_t CDC_MSK {0x7F};
 
-        void SaveContext(uint32_t depth) {
-            __asm("DSYNC");
-            uint32_t lower_csa;
-            __asm("MFCR    %0, #0xFE00" /* PCXI */
-                    : "=d" (lower_csa)
-                    :
-                    : );
-            uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < (depth - 1); i++) {
-                p_csa = csa_to_address(p_csa[0]);
-            }
-            lower_csa = p_csa[0];
-            uint32_t *p_lower_csa = csa_to_address(lower_csa);
-            uint32_t *p_upper_csa = csa_to_address(p_lower_csa[0]);
-            this->top_of_stack = reinterpret_cast<uint32_t *>(p_upper_csa[2]);
-            this->top_of_stack--;
-            *this->top_of_stack = lower_csa;
-        }
 
-        void LoadContext(uint32_t depth) {
-            __asm("DSYNC");
-            uint32_t new_lower_csa = *this->top_of_stack;
-            this->top_of_stack++;
-
-            uint32_t lower_csa;
-            __asm("MFCR    %0, #0xFE00" /* PCXI */
-                    : "=d" (lower_csa)
-                    :
-                    : );
-            uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < (depth - 1); i++) {
-                p_csa = csa_to_address(p_csa[0]);
-            }
-            p_csa[0] = new_lower_csa;
-        }
-
+    protected:
+        /* Generation of the Effective Address of a Context Save Area (CSA) */
         uint32_t * csa_to_address(uint32_t csa) {
             uint32_t csa_addr = (csa & 0xFFFFuL) << 6;
             uint32_t segment = ((csa >> 16) & 0xFu) << 28;
             csa_addr |= segment;
             return reinterpret_cast<uint32_t *>(csa_addr);
+        }
+
+
+    public:
+        uint32_t *top_of_stack;
+        TaskBase(uint32_t *stack_top) : top_of_stack{stack_top} { }
+        TaskBase *next {nullptr};
+
+        virtual ~TaskBase() = default;
+        TaskBase()                              = delete;
+        TaskBase(const TaskBase&)               = delete;
+        TaskBase(TaskBase&&)                    = delete;
+        TaskBase& operator=(const TaskBase&)    = delete;
+        TaskBase& operator=(TaskBase&&)         = delete;
+
+        void SaveContext() {
+            __asm("DSYNC");
+
+            uint32_t call_depth;
+            __asm("MFCR    %0, #0xFE04" /* PSW Program Status Word */
+                    /* Value is incremented on each Call and is decremented on a Return */
+                    : "=d" (call_depth)
+                    :
+                    : );
+            call_depth &= CDC_MSK;
+
+            uint32_t lower_csa;
+            /* PCXI Previous Context Information and Pointer Register */
+            __asm("MFCR    %0, #0xFE00"
+                    : "=d" (lower_csa)
+                    :
+                    : );
+
+            /* CSAs are linked together through a Link Word (PCXI): the first element in SCA */
+            uint32_t *p_csa = csa_to_address(lower_csa);
+            for (uint32_t i = 0; i < (call_depth - 1); i++) {
+                p_csa = csa_to_address(p_csa[0]);
+            }
+            lower_csa = p_csa[0];
+
+            uint32_t *p_lower_csa = csa_to_address(lower_csa);
+            uint32_t *p_upper_csa = csa_to_address(p_lower_csa[0]);
+            this->top_of_stack = reinterpret_cast<uint32_t *>(p_upper_csa[2]); /* A[10] (SP) */
+
+            /* Save PCXI (Link Word) on the stack */
+            this->top_of_stack--;
+            *this->top_of_stack = lower_csa;
+        }
+
+        void LoadContext() {
+            __asm("DSYNC");
+            uint32_t loaded_lower_csa = *this->top_of_stack;
+            this->top_of_stack++;
+
+            uint32_t call_depth;
+            __asm("MFCR    %0, #0xFE04" /* PSW Program Status Word */
+                    /* Value is incremented on each Call and is decremented on a Return */
+                    : "=d" (call_depth)
+                    :
+                    : );
+            call_depth &= CDC_MSK;
+
+            uint32_t lower_csa;
+            /* PCXI Previous Context Information and Pointer Register */
+            __asm("MFCR    %0, #0xFE00"
+                    : "=d" (lower_csa)
+                    :
+                    : );
+
+            /* CSAs are linked together through a Link Word (PCXI): the first element in SCA */
+            uint32_t *p_csa = csa_to_address(lower_csa);
+            for (uint32_t i = 0; i < (call_depth - 1); i++) {
+                p_csa = csa_to_address(p_csa[0]);
+            }
+
+            /* Replace task lower CSA in the call stack */
+            p_csa[0] = loaded_lower_csa;
         }
 };
 
@@ -125,11 +160,11 @@ class Task final : public TaskBase {
             init_stack();
         }
         ~Task() override = default;
-        Task() = delete;
-        Task(const Task&) = delete;
-        Task(Task&&) = delete;
-        Task& operator=(const Task&) = delete;
-        Task& operator=(Task&&) = delete;
+        Task()                          = delete;
+        Task(const Task&)               = delete;
+        Task(Task&&)                    = delete;
+        Task& operator=(const Task&)    = delete;
+        Task& operator=(Task&&)         = delete;
 };
 
 #endif /* RTOS_TASK_H_ */

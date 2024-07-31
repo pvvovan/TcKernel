@@ -52,10 +52,9 @@ class Kernel final {
         }
 
         void SysIsr() {
-            const uint32_t CALL_DEPTH {1};
-            current_task->SaveContext(CALL_DEPTH);
+            current_task->SaveContext();
             ScheduleTask();
-            current_task->LoadContext(CALL_DEPTH);
+            current_task->LoadContext();
         }
 
 
