@@ -3,18 +3,22 @@
 
 #include "KernelDef.h"
 #include "KernelCore1.h"
+#include "Kernel.h"
+#include "Task.h"
 #include "Src.h"
 #include "Stm.h"
 
 
 typedef SRC_STMxSRy<1, 0> SRC_STM1SR0_t;
 static STM<1> STM1 = STM<1>();
+static Kernel kernel_one = Kernel();
 
 static volatile uint32_t systicks = 0;
 
 extern "C" void KernelCore1_SysIsr(void)
 {
     STM1.Isr();
+    kernel_one.SysIsr();
     systicks++;
 }
 
@@ -35,12 +39,16 @@ static void task_c1_blink(void)
     }
 }
 
+static Task<256> task0(&task_c1_blink);
+
 extern "C" void KernelCore1_Start(void)
 {
     SRC_STM1SR0_t SRC_STM1SR0 = SRC_STM1SR0_t();
     SRC_STM1SR0.EnableService(SYS_IRQ_PRIO, SRC_STM1SR0_t::SRC_TOS::CPU1);
 
+    kernel_one.AddTask(&task0);
     STM1.EnableIrq();
-    task_c1_blink();
+    kernel_one.StartRtos();
+
     for( ; ; ) { }
 }
