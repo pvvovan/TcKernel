@@ -3,6 +3,17 @@
 
 #include <stdint.h>
 
+
+enum class SRC_TOS {
+    CPU0 = 0,
+    DMA  = 1,
+    CPU1 = 2,
+    CPU2 = 3,
+    CPU3 = 4,
+    CPU4 = 5,
+    CPU5 = 6
+};
+
 /* Service Request Control Register */
 template<uint16_t offset>
 class SRC
@@ -13,16 +24,6 @@ class SRC
 
 
     public:
-        enum class SRC_TOS {
-            CPU0 = 0,
-            DMA  = 1,
-            CPU1 = 2,
-            CPU2 = 3,
-            CPU3 = 4,
-            CPU4 = 5,
-            CPU5 = 6
-        };
-
         SRC() = default;
         virtual ~SRC() = default;
 

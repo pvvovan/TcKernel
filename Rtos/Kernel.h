@@ -55,10 +55,19 @@ class Kernel final {
             current_task->SaveContext();
             ScheduleTask();
             current_task->LoadContext();
+            systicks++;
+        }
+
+        void delay_ms(uint32_t ms) {
+            const uint32_t entry_ticks = systicks;
+            while (systicks - entry_ticks < ms) {
+                __asm("NOP");
+            }
         }
 
 
     private:
+        volatile uint32_t systicks {0};
         TaskBase *current_task {nullptr};
 
         void ScheduleTask() {
