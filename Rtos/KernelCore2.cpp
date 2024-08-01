@@ -3,6 +3,7 @@
 
 #include "KernelCore2.h"
 #include "Kernel.h"
+#include "Count.h"
 
 
 static Kernel<2> kernel{};
@@ -26,6 +27,9 @@ static Task<256> task0(&task0_c2_blink);
 extern "C" void KernelCore2_Start(void)
 {
     kernel.AddTask(&task0);
+    kernel.AddTask(&g_task0_core2);
+    kernel.AddTask(&g_task1_core2);
+    kernel.AddTask(&g_task2_core2);
     kernel.StartRtos();
     for( ; ; ) { /* kernel.StartRtos() shall never return */ }
 }

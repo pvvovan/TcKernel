@@ -33,5 +33,7 @@
 
 TriCore Debug (TASKING)/
 TriCore Debug (GCC)/
+TriCore Release (TASKING)/
 .ads/winIDEAWorkspaces/
 Tc6Kernel TriCore Debug (TASKING).launch
+Tc6Kernel TriCore Release (TASKING).launch

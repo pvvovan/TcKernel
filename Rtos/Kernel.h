@@ -41,7 +41,7 @@ class Kernel final {
                     : "=d" (curr_psw)
                     :
                     : );
-            const uint32_t PSW_MSK {0x7FuL};
+            constexpr uint32_t PSW_MSK {0x7FuL};
             curr_psw &= ~PSW_MSK;
             __asm("MTCR    #0xFE04, %0" /* PSW */
                     :

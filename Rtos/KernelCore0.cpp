@@ -3,6 +3,7 @@
 
 #include "KernelCore0.h"
 #include "Kernel.h"
+#include "Count.h"
 
 
 static Kernel<0> kernel{};
@@ -37,6 +38,9 @@ extern "C" void KernelCore0_Start(void)
 {
     kernel.AddTask(&task1);
     kernel.AddTask(&task2);
+    kernel.AddTask(&g_task0_core0);
+    kernel.AddTask(&g_task1_core0);
+    kernel.AddTask(&g_task2_core0);
     kernel.StartRtos();
     for( ; ; ) { /* kernel.StartRtos() shall never return */ }
 }

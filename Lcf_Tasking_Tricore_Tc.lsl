@@ -1221,6 +1221,11 @@ derivative tc39
                     select "(.data.lmudata|.data.lmudata.*)";
                     select "(.bss.lmubss|.bss.lmubss.*)";
                 }
+                group (ordered, attributes=rw, run_addr=mem:lmuram/not_cached)
+                {
+                    select "(.data.Count.*)";
+                    select "(.bss.Count.*)";
+                }
             }
         }
         
