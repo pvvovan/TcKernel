@@ -28,6 +28,10 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelDef.h"
+#include "KernelCore2.h"
+
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 volatile uint32 g_Slave2Ready = 0;
@@ -51,5 +55,11 @@ void core2_main(void)
         /* Wait for master core */
     }
 
+    KernelCore2_Start();
     for(;;);
+}
+
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB2) Stm2SysIsr(void)
+{
+    KernelCore2_SysIsr();
 }
