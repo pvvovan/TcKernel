@@ -1,21 +1,14 @@
 #include "Port/Io/IfxPort_Io.h"
 #include "IfxPort_PinMap.h"
 
-#include "KernelDef.h"
 #include "KernelCore2.h"
 #include "Kernel.h"
-#include "Task.h"
-#include "Src.h"
-#include "Stm.h"
 
 
-typedef SRC_STMxSRy<2, 0> SRC_STMSR0_t;
-static STM<2> stm = STM<2>();
-static Kernel kernel = Kernel();
+static Kernel<2> kernel{};
 
 extern "C" void KernelCore2_SysIsr(void)
 {
-    stm.Isr();
     kernel.SysIsr();
 }
 
@@ -32,12 +25,7 @@ static Task<256> task0(&task0_c2_blink);
 
 extern "C" void KernelCore2_Start(void)
 {
-    SRC_STMSR0_t SRC_STMSR0 = SRC_STMSR0_t();
-    SRC_STMSR0.EnableService(SYS_IRQ_PRIO, SRC_TOS::CPU2);
-
     kernel.AddTask(&task0);
-    stm.EnableIrq();
     kernel.StartRtos();
-
-    for( ; ; ) { }
+    for( ; ; ) { /* kernel.StartRtos() shall never return */ }
 }

@@ -2,12 +2,28 @@
 #define RTOS_KERNEL_H_
 
 #include <stdint.h>
+#include "KernelDef.h"
 #include "Task.h"
+#include "Stm.h"
+#include "Src.h"
 
 
+template<uint8_t core>
 class Kernel final {
     public:
+        Kernel() {
+            src.EnableService(SYS_IRQ_PRIO, tos());
+        }
+
+        ~Kernel() = default;
+        Kernel(const Kernel&)               = delete;
+        Kernel(Kernel&&)                    = delete;
+        Kernel& operator=(const Kernel&)    = delete;
+        Kernel& operator=(Kernel&&)         = delete;
+
         void StartRtos() {
+            stm.EnableIrq();
+
             __asm("DISABLE");
             __asm("DSYNC");
             uint32_t lower_csa = *current_task->top_of_stack;
@@ -52,6 +68,7 @@ class Kernel final {
         }
 
         void SysIsr() {
+            stm.Isr();
             current_task->SaveContext();
             ScheduleTask();
             current_task->LoadContext();
@@ -67,11 +84,32 @@ class Kernel final {
 
 
     private:
+        STM<core> stm {};
+        SRC_STMxSRy<core, 0> src {};
         volatile uint32_t systicks {0};
         TaskBase *current_task {nullptr};
 
         void ScheduleTask() {
             current_task = current_task->next;
+        }
+
+        SRC_TOS tos() {
+            switch (core) {
+                case 0:
+                    return SRC_TOS::CPU0;
+                case 1:
+                    return SRC_TOS::CPU1;
+                case 2:
+                    return SRC_TOS::CPU2;
+                case 3:
+                    return SRC_TOS::CPU3;
+                case 4:
+                    return SRC_TOS::CPU4;
+                case 5:
+                    return SRC_TOS::CPU5;
+                default:
+                    return SRC_TOS::DMA;
+            }
         }
 };
 
