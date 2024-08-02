@@ -11,13 +11,13 @@ template<uint32_t core>
 class STM final
 {   
     private:
-    static const uint32_t STM_BASE {0xF0001000uL};
-    static const uint32_t STM_SIZE {0x100};
+    static constexpr uint32_t STM_BASE {0xF0001000uL};
+    static constexpr uint32_t STM_SIZE {0x100};
     static_assert(core < 6, "Core out of range");
 
 
     public:
-    static const uint32_t TICKS_1MS {100000};
+    static constexpr uint32_t TICKS_1MS {100000};
 
     /* Registers TIM0 to TIM6 provide 32-bit views at varying resolutions of the underlying STM counter */
     template<uint32_t x>
@@ -35,21 +35,21 @@ class STM final
 
     /* The STM Compare Match Control Register controls the parameters of the compare logic */
     volatile uint32_t& CMCON {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0x38)};
-    const uint32_t CMCON_MSIZE0 {0x1F}; /* 1FH CMP0[31:0] used for compare operation */
+    static constexpr uint32_t CMCON_MSIZE0 {0x1F}; /* 1FH CMP0[31:0] used for compare operation */
 
     /* The two compare match interrupts of the STM are controlled by the STM Interrupt Control Register */
     volatile uint32_t& ICR {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0x3C)};
-    const uint32_t ICR_CMP0EN {1uL << 0}; /* 1B Interrupt on compare match with CMP0 enabled */
+    static constexpr uint32_t ICR_CMP0EN {1uL << 0}; /* 1B Interrupt on compare match with CMP0 enabled */
 
     /* The bits in the STM Interrupt Set/Clear Register make it possible to set or clear the
      * compare match interrupt request status flags of register ICR */
     volatile uint32_t& ISCR {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0x40)};
-    const uint32_t ISCR_CMP0IRR {1uL << 0}; /* 1B Bit ICR.CMP0IR is cleared */
+    static constexpr uint32_t ISCR_CMP0IRR {1uL << 0}; /* 1B Bit ICR.CMP0IR is cleared */
 
     /* OCDS Control and Status Register */
     volatile uint32_t& OCS {*reinterpret_cast<uint32_t *>(STM_BASE + core * STM_SIZE + 0xE8)};
-    const uint32_t OCS_SUS   {2uL << 24}; /* 2H 64-bit counter will be stopped */
-    const uint32_t OCS_SUS_P {1uL << 28}; /* SUS is only written when SUS_P is 1, otherwise unchanged. Read as 0 */
+    static constexpr uint32_t OCS_SUS   {2uL << 24}; /* 2H 64-bit counter will be stopped */
+    static constexpr uint32_t OCS_SUS_P {1uL << 28}; /* SUS is only written when SUS_P is 1, otherwise unchanged. Read as 0 */
 
     void EnableIrq() {
         this->CMP<0>() = this->TIM<0>() + TICKS_1MS;

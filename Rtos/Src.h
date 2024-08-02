@@ -19,7 +19,7 @@ template<uint16_t offset>
 class SRC
 {
     private:
-        const uint32_t BASE {0xF0038000uL};
+        static constexpr uint32_t BASE {0xF0038000uL};
         static_assert(offset <= 0x00FD0u, "Service Request Control Register is out of range");
 
 
