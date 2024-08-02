@@ -47,11 +47,12 @@ static void dma_init()
 
     DMA::TSR<STM_DMA_PRIO>::R().ECH = 1; /* Enable DMA Channel Hardware Transaction Request */
 
-    SRC_STMxSRy<5, 1> SRC_STM5SR1{};
+    constexpr ICR irq {ICR::Irq_1};
+    SRC_STMxSRy<5, irq> SRC_STM5SR1{};
     SRC_STM5SR1.EnableService(STM_DMA_PRIO, SRC_TOS::DMA);
 
     STM<5> STM5{};
-    STM5.EnableIrq();
+    STM5.Enable(irq);
 }
 
 static void task1_c0_blink()

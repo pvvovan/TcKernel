@@ -2,6 +2,7 @@
 #define RTOS_SRC_H_
 
 #include <stdint.h>
+#include <Stm.h>
 
 
 enum class SRC_TOS {
@@ -57,15 +58,14 @@ class SRC
         }
 };
 
-template<uint8_t x, uint8_t y>
+template<uint8_t x, enum ICR irq>
 class SRC_STMxSRy final : public SRC<0x00300u>
 {
     private:
         static_assert(x < 6, "STMx not available");
-        static_assert(y < 2, "STM SRy not available");
 
     public:
-        SRC_STMxSRy() : SRC(x * 8 + y * 4) { }
+        SRC_STMxSRy() : SRC(x * 8 + static_cast<uint32_t>(irq) * 4) { }
 };
 
 #endif /* RTOS_SRC_H_ */

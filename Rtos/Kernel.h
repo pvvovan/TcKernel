@@ -22,7 +22,7 @@ class Kernel final {
         Kernel& operator=(Kernel&&)         = delete;
 
         void StartRtos() {
-            stm.EnableIrq();
+            stm.Enable(irq);
 
             __asm("DISABLE");
             __asm("DSYNC");
@@ -84,8 +84,9 @@ class Kernel final {
 
 
     private:
+        static constexpr ICR irq {ICR::Irq_0};
         STM<core> stm {};
-        SRC_STMxSRy<core, 0> src {};
+        SRC_STMxSRy<core, irq> src {};
         volatile uint32_t systicks {0};
         TaskBase *current_task {nullptr};
 

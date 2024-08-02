@@ -5,6 +5,8 @@
 #include <type_traits>
 
 
+enum class ICR { Irq_0 = 0, Irq_1 = 1 };
+
 /* System Timer (STM) is designed for global system timing applications
  * requiring both high precision and long period. */
 template<uint32_t core>
@@ -51,10 +53,10 @@ class STM final
     static constexpr uint32_t OCS_SUS   {2uL << 24}; /* 2H 64-bit counter will be stopped */
     static constexpr uint32_t OCS_SUS_P {1uL << 28}; /* SUS is only written when SUS_P is 1, otherwise unchanged. Read as 0 */
 
-    void EnableIrq() {
+    void Enable(enum ICR irq) {
         this->CMP<0>() = this->TIM<0>() + TICKS_1MS;
         this->CMCON = CMCON_MSIZE0; /* Compare Register Size for CMP0 */
-        this->ICR = ICR_CMP0EN; /* Enable interrupt on compare match with CMP0 */
+        this->ICR = ICR_CMP0EN | (static_cast<uint32_t>(irq) << 2); /* Enable interrupt on compare match with CMP0 */
         this->OCS = OCS_SUS | OCS_SUS_P; /* OCDS Suspend Control */
         this->ISCR = ISCR_CMP0IRR; /* Reset Compare Register CMP0 Interrupt Flag */
     }
