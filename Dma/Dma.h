@@ -120,7 +120,7 @@ class CHCSR final {
         CHCSR();
 
     public:
-              volatile uint16_t TCOUNT : 14; /* Transfer Count */
+        const volatile uint16_t TCOUNT : 14; /* DMA channel status transfer count updated after DMARAM write back */
                         uint8_t        :  1; /* Reserved */
         const volatile  uint8_t LXO    :  1; /* Old Value of Pattern Detection */
         const volatile  uint8_t WRPS   :  1; /* Wrap Source Buffer */
