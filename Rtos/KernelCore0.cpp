@@ -24,8 +24,8 @@ __align(BUF_SIZE_BYTES) volatile uint32_t g_tim_cnt[BUF_SIZE_ELEMS] = { 0 };
 
 static void dma_init()
 {
-    DMA::DADR<STM_DMA_PRIO>::R() = &g_tim_cnt[0];
-    DMA::SADR<STM_DMA_PRIO>::R() = &STM<5>().TIM<0>();
+    DMA::DADR<STM_DMA_PRIO>::R = &g_tim_cnt[0];
+    DMA::SADR<STM_DMA_PRIO>::R = &STM<5>().TIM<0>();
 
 
     /* 010B: 32-bit data width for moves selected */

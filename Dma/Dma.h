@@ -43,11 +43,10 @@ class SADR final {
         SADR();
 
     public:
-        /* 32-bit source address */
-        static uint32_t volatile * & R() {
-            return *reinterpret_cast<uint32_t volatile **>(BASE + 0x2008 + c * 0x20);
-        }
+        static uint32_t volatile * & R; /* 32-bit source address */
 };
+template<uint8_t c>
+uint32_t volatile * & SADR<c>::R { *reinterpret_cast<uint32_t volatile **>(BASE + 0x2008 + c * 0x20) };
 
 /* DMARAM Channel c Destination Address Register */
 template<uint8_t c>
@@ -56,11 +55,10 @@ class DADR final {
         DADR();
 
     public:
-        /* 32-bit destination address */
-        static uint32_t volatile * & R() {
-            return *reinterpret_cast<uint32_t volatile **>(BASE + 0x200C + c * 0x20);
-        }
+        static uint32_t volatile * & R; /* 32-bit destination address */
 };
+template<uint8_t c>
+uint32_t volatile * & DADR<c>::R { *reinterpret_cast<uint32_t volatile **>(BASE+ 0x200C + c * 0x20) };
 
 /* DMARAM Channel c Address and Interrupt Control Register */
 template<uint8_t c>
