@@ -4,16 +4,10 @@
 #include <stdint.h>
 
 
-namespace DMA {
-
-static constexpr uint32_t BASE_addr {0xF0010000};
-
-
 /* DMA Channel c Transaction State Register */
-template<uint8_t c>
-class TSR final {
-      static_assert(c < 128, "DMA channel does not exist");
-      TSR();
+class TSR_t final {
+    private:
+        TSR_t();
 
     public:
             volatile uint8_t RST    : 1; /* DMA Channel Reset */
@@ -31,49 +25,12 @@ class TSR final {
                      uint8_t        : 5; /* Reserved */
             volatile uint8_t HLTCLR : 1; /* Clear DMA Channel Halt Request and Acknowledge */
                      uint8_t        : 7; /* Reserved */
-
-      static TSR<c> & R;
 };
-
-template<uint8_t c>
-TSR<c> & TSR<c>::R { *reinterpret_cast<TSR<c> *>(BASE_addr + 0x1E00 + c * 4) };
-
-
-/* DMARAM Channel c Source Address Register */
-template<uint8_t c>
-class SADR final {
-        static_assert(c < 128, "DMA channel does not exist");
-        SADR();
-
-    public:
-        static uint32_t volatile * & R; /* 32-bit source address */
-};
-
-template<uint8_t c>
-uint32_t volatile * & SADR<c>::R {
-    *reinterpret_cast<uint32_t volatile **>(BASE_addr + 0x2008 + c * 0x20) };
-
-
-/* DMARAM Channel c Destination Address Register */
-template<uint8_t c>
-class DADR final {
-        static_assert(c < 128, "DMA channel does not exist");
-        DADR();
-
-    public:
-        static uint32_t volatile * & R; /* 32-bit destination address */
-};
-
-template<uint8_t c>
-uint32_t volatile * & DADR<c>::R {
-    *reinterpret_cast<uint32_t volatile **>(BASE_addr+ 0x200C + c * 0x20) };
-
 
 /* DMARAM Channel c Address and Interrupt Control Register */
-template<uint8_t c>
-class ADICR final {
-        static_assert(c < 128, "DMA channel does not exist");
-        ADICR();
+class ADICR_t final {
+    private:
+        ADICR_t();
 
     public:
         volatile uint32_t SMF    : 3; /* Source Address Modification Factor */
@@ -91,19 +48,12 @@ class ADICR final {
         volatile uint32_t WRPDE  : 1; /* Wrap Destination Enable */
         volatile uint32_t INTCT  : 2; /* Interrupt Control */
         volatile uint32_t IRDV   : 4; /* Interrupt Raise Detect Value */
-
-        static ADICR<c> & R;
 };
 
-template<uint8_t c>
-ADICR<c> & ADICR<c>::R { *reinterpret_cast<ADICR<c> *>(BASE_addr + 0x2010 + c * 0x20) };
-
-
-/* DMARAM Channel c Address and Interrupt Control Register */
-template<uint8_t c>
-class CHCFGR final {
-        static_assert(c < 128, "DMA channel does not exist");
-        CHCFGR();
+/* DMARAM Channel c Configuration Register */
+class CHCFGR_t final {
+    private:
+        CHCFGR_t();
 
     public:
         volatile uint32_t TREL   : 14; /* Transfer Reload Value */
@@ -116,19 +66,12 @@ class CHCFGR final {
         volatile uint32_t SWAP   :  1; /* Swap Data CRC Byte Order */
         volatile uint32_t PRSEL  :  1; /* Peripheral Request Select */
         volatile uint32_t        :  3; /* Reserved */
-
-        static CHCFGR<c> & R;
 };
 
-template<uint8_t c>
-CHCFGR<c> & CHCFGR<c>::R { *reinterpret_cast<CHCFGR<c> *>(BASE_addr + 0x2014 + c * 0x20) };
-
-
 /* DMARAM Channel c Control and Status Register */
-template<uint8_t c>
-class CHCSR final {
-        static_assert(c < 128, "DMA channel does not exist");
-        CHCSR();
+class CHCSR_t final {
+    private:
+        CHCSR_t();
 
     public:
         const volatile uint16_t TCOUNT : 14; /* DMA channel status transfer count updated after DMARAM write back */
@@ -147,14 +90,49 @@ class CHCSR final {
               volatile  uint8_t SIT    :  1; /* Set Interrupt Trigger for DMA Channel */
                         uint8_t        :  3; /* Reserved */
               volatile  uint8_t SCH    :  1; /* Set Transaction Request */
-
-        static CHCSR<c> & R;
 };
 
+
 template<uint8_t c>
-CHCSR<c> & CHCSR<c>::R { *reinterpret_cast<CHCSR<c> *>(BASE_addr + 0x201C + c * 0x20) };
+class DMA {
+    private:
+        static_assert(c < 128, "DMA channel does not exist");
+        DMA();
+        static constexpr uint32_t BASE_addr {0xF0010000};
 
+    public:
+        static TSR_t & TSR; /* DMA Channel c Transaction State Register */
+        static uint32_t volatile * & SADR; /* DMARAM Channel c Source Address Register */
+        static uint32_t volatile * & DADR; /* DMARAM Channel c Destination Address Register */
+        static ADICR_t & ADICR; /* DMARAM Channel c Address and Interrupt Control Register */
+        static CHCFGR_t & CHCFGR; /* DMARAM Channel c Configuration Register */
+        static CHCSR_t & CHCSR; /* DMARAM Channel c Control and Status Register */
+};
 
-}
+/* DMA Channel c Transaction State Register */
+template<uint8_t c>
+TSR_t & DMA<c>::TSR { *reinterpret_cast<TSR_t *>(BASE_addr + 0x1E00 + c * 0x04) };
+
+/* DMARAM Channel c Source Address Register */
+template<uint8_t c>
+uint32_t volatile * & DMA<c>::SADR {
+    *reinterpret_cast<uint32_t volatile **>(BASE_addr + 0x2008 + c * 0x20) };
+
+/* DMARAM Channel c Destination Address Register */
+template<uint8_t c>
+uint32_t volatile * & DMA<c>::DADR {
+    *reinterpret_cast<uint32_t volatile **>(BASE_addr + 0x200C + c * 0x20) };
+
+/* DMARAM Channel c Address and Interrupt Control Register */
+template<uint8_t c>
+ADICR_t & DMA<c>::ADICR { *reinterpret_cast<ADICR_t *>(BASE_addr + 0x2010 + c * 0x20) };
+
+/* DMARAM Channel c Configuration Register */
+template<uint8_t c>
+CHCFGR_t & DMA<c>::CHCFGR { *reinterpret_cast<CHCFGR_t *>(BASE_addr + 0x2014 + c * 0x20) };
+
+/* DMARAM Channel c Control and Status Register */
+template<uint8_t c>
+CHCSR_t & DMA<c>::CHCSR { *reinterpret_cast<CHCSR_t *>(BASE_addr + 0x201C + c * 0x20) };
 
 #endif /* DMA_DMA_H_ */
