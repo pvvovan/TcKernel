@@ -29,32 +29,32 @@ static void dma_init()
 
 
     /* 010B: 32-bit data width for moves selected */
-    DMA::CHCFGR<STM_DMA_PRIO>::R().CHDW = 2;
+    DMA::CHCFGR<STM_DMA_PRIO>::R.CHDW = 2;
 
     /* 1B: Continuous_Mode, is selected for DMA channel.
      After a DMA transaction, bit TSR.HTRE remains set. */
-    DMA::CHCFGR<STM_DMA_PRIO>::R().CHMODE = 1;
+    DMA::CHCFGR<STM_DMA_PRIO>::R.CHMODE = 1;
 
     /* 0B: DMA channel TSR.CH is reset after the start of each DMA transfer.
      A DMA request is required for each DMA transfer. */
     /* 1B: DMA channel TSR.CH is reset when CHSR.TCOUNT = 0 and after the
      completion of the last DMA transfer (i.e. on completion of the DMA
      transaction). One DMA request starts a complete DMA transaction. */
-    DMA::CHCFGR<STM_DMA_PRIO>::R().RROAT = 0;
+    DMA::CHCFGR<STM_DMA_PRIO>::R.RROAT = 0;
 
     /* If CHCFGR.TREL = 0 or if CHCFGR.TREL = 1 then ME CHSR.TCOUNT will be
      loaded with 1 when a new DMA transaction is started (at least one DMA
      transfer must be executed per DMA transaction). */
-    DMA::CHCFGR<STM_DMA_PRIO>::R().TREL = 1;
+    DMA::CHCFGR<STM_DMA_PRIO>::R.TREL = 1;
 
 
-    DMA::ADICR<STM_DMA_PRIO>::R().INCS = 1; /* 1B: Address offset will be added */
-    DMA::ADICR<STM_DMA_PRIO>::R().INCD = 1; /* 1B: Address offset will be added */
-    DMA::ADICR<STM_DMA_PRIO>::R().DCBE = 1; /* 1B: Destination circular buffer enabled */
-    DMA::ADICR<STM_DMA_PRIO>::R().SCBE = 1; /* 1B: Source circular buffer enabled */
-    DMA::ADICR<STM_DMA_PRIO>::R().CBLD = BUF_SIZE_PWR2; /* Circular buffer is 2^CBLD bytes */
+    DMA::ADICR<STM_DMA_PRIO>::R.INCS = 1; /* 1B: Address offset will be added */
+    DMA::ADICR<STM_DMA_PRIO>::R.INCD = 1; /* 1B: Address offset will be added */
+    DMA::ADICR<STM_DMA_PRIO>::R.DCBE = 1; /* 1B: Destination circular buffer enabled */
+    DMA::ADICR<STM_DMA_PRIO>::R.SCBE = 1; /* 1B: Source circular buffer enabled */
+    DMA::ADICR<STM_DMA_PRIO>::R.CBLD = BUF_SIZE_PWR2; /* Circular buffer is 2^CBLD bytes */
 
-    DMA::TSR<STM_DMA_PRIO>::R().ECH = 1; /* Enable DMA Channel Hardware Transaction Request */
+    DMA::TSR<STM_DMA_PRIO>::R.ECH = 1; /* Enable DMA Channel Hardware Transaction Request */
 
     constexpr ICR irq {ICR::Irq_1};
     SRC_STMxSRy<5, irq> SRC_STM5SR1{};

@@ -6,7 +6,8 @@
 
 namespace DMA {
 
-static constexpr uint32_t BASE {0xF0010000};
+static constexpr uint32_t BASE_addr {0xF0010000};
+
 
 /* DMA Channel c Transaction State Register */
 template<uint8_t c>
@@ -31,10 +32,12 @@ class TSR final {
             volatile uint8_t HLTCLR : 1; /* Clear DMA Channel Halt Request and Acknowledge */
                      uint8_t        : 7; /* Reserved */
 
-      static TSR & R() {
-          return *reinterpret_cast<TSR *>(BASE + 0x1E00 + c * 4);
-      }
+      static TSR<c> & R;
 };
+
+template<uint8_t c>
+TSR<c> & TSR<c>::R { *reinterpret_cast<TSR<c> *>(BASE_addr + 0x1E00 + c * 4) };
+
 
 /* DMARAM Channel c Source Address Register */
 template<uint8_t c>
@@ -45,8 +48,11 @@ class SADR final {
     public:
         static uint32_t volatile * & R; /* 32-bit source address */
 };
+
 template<uint8_t c>
-uint32_t volatile * & SADR<c>::R { *reinterpret_cast<uint32_t volatile **>(BASE + 0x2008 + c * 0x20) };
+uint32_t volatile * & SADR<c>::R {
+    *reinterpret_cast<uint32_t volatile **>(BASE_addr + 0x2008 + c * 0x20) };
+
 
 /* DMARAM Channel c Destination Address Register */
 template<uint8_t c>
@@ -57,8 +63,11 @@ class DADR final {
     public:
         static uint32_t volatile * & R; /* 32-bit destination address */
 };
+
 template<uint8_t c>
-uint32_t volatile * & DADR<c>::R { *reinterpret_cast<uint32_t volatile **>(BASE+ 0x200C + c * 0x20) };
+uint32_t volatile * & DADR<c>::R {
+    *reinterpret_cast<uint32_t volatile **>(BASE_addr+ 0x200C + c * 0x20) };
+
 
 /* DMARAM Channel c Address and Interrupt Control Register */
 template<uint8_t c>
@@ -83,10 +92,12 @@ class ADICR final {
         volatile uint32_t INTCT  : 2; /* Interrupt Control */
         volatile uint32_t IRDV   : 4; /* Interrupt Raise Detect Value */
 
-        static ADICR & R() {
-            return *reinterpret_cast<ADICR *>(BASE + 0x2010 + c * 0x20);
-        }
+        static ADICR<c> & R;
 };
+
+template<uint8_t c>
+ADICR<c> & ADICR<c>::R { *reinterpret_cast<ADICR<c> *>(BASE_addr + 0x2010 + c * 0x20) };
+
 
 /* DMARAM Channel c Address and Interrupt Control Register */
 template<uint8_t c>
@@ -106,10 +117,12 @@ class CHCFGR final {
         volatile uint32_t PRSEL  :  1; /* Peripheral Request Select */
         volatile uint32_t        :  3; /* Reserved */
 
-        static volatile CHCFGR & R() {
-            return *reinterpret_cast<volatile CHCFGR *>(BASE + 0x2014 + c * 0x20);
-        }
+        static CHCFGR<c> & R;
 };
+
+template<uint8_t c>
+CHCFGR<c> & CHCFGR<c>::R { *reinterpret_cast<CHCFGR<c> *>(BASE_addr + 0x2014 + c * 0x20) };
+
 
 /* DMARAM Channel c Control and Status Register */
 template<uint8_t c>
@@ -135,10 +148,12 @@ class CHCSR final {
                         uint8_t        :  3; /* Reserved */
               volatile  uint8_t SCH    :  1; /* Set Transaction Request */
 
-        static CHCSR & R() {
-            return *reinterpret_cast<CHCSR *>(BASE + 0x201C + c * 0x20);
-        }
+        static CHCSR<c> & R;
 };
+
+template<uint8_t c>
+CHCSR<c> & CHCSR<c>::R { *reinterpret_cast<CHCSR<c> *>(BASE_addr + 0x201C + c * 0x20) };
+
 
 }
 
