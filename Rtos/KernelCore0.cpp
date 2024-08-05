@@ -25,26 +25,26 @@ __align(BUF_SIZE_BYTES) volatile uint32_t g_tim_cnt[BUF_SIZE_ELEMS] = { 0 };
 static void dma_init()
 {
     DMA<STM_DMA_PRIO>::DADR = &g_tim_cnt[0];
-    DMA<STM_DMA_PRIO>::SADR = &STM<5>().TIM<0>();
+    DMA<STM_DMA_PRIO>::SADR = &STM5.TIM<0>();
 
 
     /* 010B: 32-bit data width for moves selected */
     DMA<STM_DMA_PRIO>::CHCFGR.CHDW = 2;
 
-    /* 1B: Continuous_Mode, is selected for DMA channel.
-     After a DMA transaction, bit TSR.HTRE remains set. */
+    /** 1B: Continuous_Mode, is selected for DMA channel.
+     * After a DMA transaction, bit TSR.HTRE remains set. */
     DMA<STM_DMA_PRIO>::CHCFGR.CHMODE = 1;
 
-    /* 0B: DMA channel TSR.CH is reset after the start of each DMA transfer.
-     A DMA request is required for each DMA transfer. */
-    /* 1B: DMA channel TSR.CH is reset when CHSR.TCOUNT = 0 and after the
-     completion of the last DMA transfer (i.e. on completion of the DMA
-     transaction). One DMA request starts a complete DMA transaction. */
+    /** 0B: DMA channel TSR.CH is reset after the start of each DMA transfer.
+     * A DMA request is required for each DMA transfer. */
+    /** 1B: DMA channel TSR.CH is reset when CHSR.TCOUNT = 0 and after the
+     * completion of the last DMA transfer (i.e. on completion of the DMA
+     * transaction). One DMA request starts a complete DMA transaction. */
     DMA<STM_DMA_PRIO>::CHCFGR.RROAT = 0;
 
-    /* If CHCFGR.TREL = 0 or if CHCFGR.TREL = 1 then ME CHSR.TCOUNT will be
-     loaded with 1 when a new DMA transaction is started (at least one DMA
-     transfer must be executed per DMA transaction). */
+    /** If CHCFGR.TREL = 0 or if CHCFGR.TREL = 1 then ME CHSR.TCOUNT will be
+     * loaded with 1 when a new DMA transaction is started (at least one DMA
+     * transfer must be executed per DMA transaction). */
     DMA<STM_DMA_PRIO>::CHCFGR.TREL = 1;
 
 
@@ -56,11 +56,10 @@ static void dma_init()
 
     DMA<STM_DMA_PRIO>::TSR.ECH = 1; /* Enable DMA Channel Hardware Transaction Request */
 
-    constexpr ICR irq {ICR::Irq_1};
-    SRC_STMxSRy<5, irq> SRC_STM5SR1{};
+    SRC_STMxSRy<5, ICR::Irq_1> SRC_STM5SR1{};
     SRC_STM5SR1.EnableService(STM_DMA_PRIO, SRC_TOS::DMA);
 
-    STM5.Enable(irq);
+    STM5.Enable(ICR::Irq_1);
 }
 
 static void task1_c0_blink()

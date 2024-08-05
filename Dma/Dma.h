@@ -14,7 +14,7 @@ struct TSR_t final {
     const volatile uint8_t CH     : 1; /* DMA Channel Transaction Request State */
           volatile uint8_t ETRL   : 1; /* Enable DMA Channel Transaction/Transfer Request Lost Interrupt */
                    uint8_t        : 3; /* Reserved */
-          volatile uint8_t HLTREQ : 1; /* Enable DMA Channel Transaction/Transfer Request Lost Interrupt */
+          volatile uint8_t HLTREQ : 1; /* DMA Channel Halt Request */
     const volatile uint8_t HLTACK : 1; /* DMA Channel Halt Acknowledge */
                    uint8_t        : 6; /* Reserved */
           volatile uint8_t ECH    : 1; /* Enable DMA Channel Hardware Transaction Request */
