@@ -90,7 +90,7 @@ class TaskBase {
 template<uint32_t stack_size>
 class Task final : public TaskBase {
         static_assert(stack_size > 127, "Too small stack size");
-        uint64_t stack[stack_size] = { 0 };
+        uint32_t stack[stack_size] = { 0 };
         void (*entry)(void) {nullptr};
 
         static void run(void (*entry)(void)) {
@@ -131,7 +131,7 @@ class Task final : public TaskBase {
             constexpr uint32_t PSW_CDE {1uL << 7}; /* Enable call depth counter */
             constexpr uint32_t INITIAL_PSW {PSW_IO | PSW_CDE};
             constexpr uint32_t INITIAL_UPPER_PCXI {1uL << 21}; /* Previous Interrupt Enable */
-            p_upper_csa[2] = reinterpret_cast<uint32_t>(top_of_stack - 2); /* A10; Stack Pointer */
+            p_upper_csa[2] = reinterpret_cast<uint32_t>(top_of_stack - 1); /* A10; Stack Pointer */
             p_upper_csa[1] = INITIAL_PSW;
             p_upper_csa[0] = INITIAL_UPPER_PCXI;
 
@@ -146,7 +146,7 @@ class Task final : public TaskBase {
 
 
     public:
-        Task(void (*entry)(void)): TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1])) {
+        Task(void (*entry)(void)) : TaskBase(&stack[stack_size - 1]) {
             this->entry = entry;
             init_stack();
         }
