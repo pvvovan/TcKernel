@@ -12,20 +12,19 @@ class TaskBase {
     protected:
         /* Generation of the Effective Address of a Context Save Area (CSA) */
         uint32_t * csa_to_address(uint32_t csa) {
-            uint32_t csa_addr = (csa & 0xFFFFuL) << 6;
-            uint32_t segment = ((csa >> 16) & 0xFu) << 28;
+            uint32_t csa_addr {(csa & 0xFFFFuL) << 6};
+            uint32_t segment {((csa >> 16) & 0xFu) << 28};
             csa_addr |= segment;
             return reinterpret_cast<uint32_t *>(csa_addr);
         }
 
 
     public:
-        uint32_t *top_of_stack;
-        TaskBase(uint32_t *stack_top) : top_of_stack{stack_top} { }
+        uint32_t *top_of_stack {nullptr};
         TaskBase *next {nullptr};
 
+        TaskBase(uint32_t *stack_top) : top_of_stack{stack_top} { }
         virtual ~TaskBase() = default;
-        TaskBase()                              = delete;
         TaskBase(const TaskBase&)               = delete;
         TaskBase(TaskBase&&)                    = delete;
         TaskBase& operator=(const TaskBase&)    = delete;
@@ -49,26 +48,18 @@ class TaskBase {
                     :
                     : );
 
-            /* CSAs are linked together through a Link Word (PCXI): the first element in SCA */
-            uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < (call_depth - 1); i++) {
+            /* CSAs are linked together through a Link Word (PCXI): the first element in CSA */
+            uint32_t *p_csa {csa_to_address(lower_csa)};
+            for (uint32_t i {0}; i < (call_depth - 1); i++) {
                 p_csa = csa_to_address(p_csa[0]);
             }
             lower_csa = p_csa[0];
-
-            uint32_t *p_lower_csa = csa_to_address(lower_csa);
-            uint32_t *p_upper_csa = csa_to_address(p_lower_csa[0]);
-            this->top_of_stack = reinterpret_cast<uint32_t *>(p_upper_csa[2]); /* A[10] (SP) */
-
-            /* Save PCXI (Link Word) on the stack */
-            this->top_of_stack--;
             *this->top_of_stack = lower_csa;
         }
 
         void LoadContext() {
             __asm("DSYNC");
-            uint32_t loaded_lower_csa = *this->top_of_stack;
-            this->top_of_stack++; /* Now it points to A[10] (SP) */
+            uint32_t loaded_lower_csa {*this->top_of_stack};
 
             uint32_t call_depth;
             __asm("MFCR    %0, #0xFE04" /* PSW Program Status Word */
@@ -85,9 +76,9 @@ class TaskBase {
                     :
                     : );
 
-            /* CSAs are linked together through a Link Word (PCXI): the first element in SCA */
-            uint32_t *p_csa = csa_to_address(lower_csa);
-            for (uint32_t i = 0; i < (call_depth - 1); i++) {
+            /* CSAs are linked together through a Link Word (PCXI): the first element in CSA */
+            uint32_t *p_csa {csa_to_address(lower_csa)};
+            for (uint32_t i {0}; i < (call_depth - 1); i++) {
                 p_csa = csa_to_address(p_csa[0]);
             }
 
@@ -100,7 +91,7 @@ template<uint32_t stack_size>
 class Task final : public TaskBase {
         static_assert(stack_size > 127, "Too small stack size");
         uint64_t stack[stack_size] = { 0 };
-        void (*entry)(void);
+        void (*entry)(void) {nullptr};
 
         static void run(void (*entry)(void)) {
             entry();
@@ -112,7 +103,7 @@ class Task final : public TaskBase {
             __asm("DSYNC");
 
             uint32_t lower_csa;
-            /* The Free CSA List Head Pointer (FCX) register holds the free CSA list head pointer.
+            /** The Free CSA List Head Pointer (FCX) register holds the free CSA list head pointer.
              * This always points to an available CSA */
             __asm("MFCR    %0, #0xFE38" /* FCX */
                     : "=d" (lower_csa)
@@ -120,9 +111,9 @@ class Task final : public TaskBase {
                     : );
 
             /* Upper CSA is linked through a Link Word */
-            uint32_t *p_lower_csa = csa_to_address(lower_csa);
-            uint32_t upper_csa = p_lower_csa[0];
-            uint32_t *p_upper_csa = csa_to_address(upper_csa);
+            uint32_t *p_lower_csa {csa_to_address(lower_csa)};
+            uint32_t upper_csa {p_lower_csa[0]};
+            uint32_t *p_upper_csa {csa_to_address(upper_csa)};
 
             /* Consume two CSAs from the free CSA list */
             __asm("MTCR    #0xFE38, %0" /* Free CSA List Head Pointer (FCX) */
@@ -132,12 +123,15 @@ class Task final : public TaskBase {
             __asm("ISYNC");
             __asm("ENABLE");
 
+            /* Save the link to the CSA on the top of stack */
+            *this->top_of_stack = lower_csa;
+
             /* Prepare Upper Context */
             constexpr uint32_t PSW_IO {2uL << 10}; /* Supervisor mode */
             constexpr uint32_t PSW_CDE {1uL << 7}; /* Enable call depth counter */
             constexpr uint32_t INITIAL_PSW {PSW_IO | PSW_CDE};
             constexpr uint32_t INITIAL_UPPER_PCXI {1uL << 21}; /* Previous Interrupt Enable */
-            p_upper_csa[2] = reinterpret_cast<uint32_t>(top_of_stack); /* A10; Stack Pointer */
+            p_upper_csa[2] = reinterpret_cast<uint32_t>(top_of_stack - 2); /* A10; Stack Pointer */
             p_upper_csa[1] = INITIAL_PSW;
             p_upper_csa[0] = INITIAL_UPPER_PCXI;
 
@@ -148,21 +142,15 @@ class Task final : public TaskBase {
             p_lower_csa[8] = reinterpret_cast<uint32_t>(entry); // A4; Function Parameter Register
             p_lower_csa[1] = reinterpret_cast<uint32_t>(&Task::run); /* A11; Return Address RA */
             p_lower_csa[0] = INITIAL_LOWER_PCXI | upper_csa; /* PCXI pointing to Upper context */
-
-            /* Save the link to the CSA on the top of stack */
-            top_of_stack--;
-            *top_of_stack = lower_csa;
         }
 
 
     public:
-        Task(void (*entry)(void)) : TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1]))
-        {
+        Task(void (*entry)(void)): TaskBase(reinterpret_cast<uint32_t *>(&stack[stack_size - 1])) {
             this->entry = entry;
             init_stack();
         }
         ~Task() override = default;
-        Task()                          = delete;
         Task(const Task&)               = delete;
         Task(Task&&)                    = delete;
         Task& operator=(const Task&)    = delete;

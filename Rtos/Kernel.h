@@ -26,10 +26,10 @@ class Kernel final {
 
             __asm("DISABLE");
             __asm("DSYNC");
-            uint32_t lower_csa = *current_task->top_of_stack;
-            current_task->top_of_stack++;
+            uint32_t lower_csa {*current_task->top_of_stack};
 
-            __asm("MTCR    #0xFE00, %0" /* PCXI */
+            /* Previous Context Information and Pointer Register (PCXI) */
+            __asm("MTCR    #0xFE00, %0"
                     :
                     : "d" (lower_csa)
                     : );
@@ -37,13 +37,13 @@ class Kernel final {
 
             /* Reset call depth counter to avoid trap on RFE */
             uint32_t curr_psw;
-            __asm("MFCR    %0, #0xFE04" /* PSW */
+            __asm("MFCR    %0, #0xFE04" /* PSW Program Status Word */
                     : "=d" (curr_psw)
                     :
                     : );
             constexpr uint32_t PSW_MSK {0x7FuL};
             curr_psw &= ~PSW_MSK;
-            __asm("MTCR    #0xFE04, %0" /* PSW */
+            __asm("MTCR    #0xFE04, %0" /* PSW Program Status Word */
                     :
                     : "d" (curr_psw)
                     : );
@@ -60,7 +60,7 @@ class Kernel final {
                 current_task = task;
                 current_task->next = task;
             } else {
-                TaskBase *next_task = current_task->next;
+                TaskBase *next_task {current_task->next};
                 task->next = next_task;
                 current_task->next = task;
                 current_task = task;
@@ -76,7 +76,7 @@ class Kernel final {
         }
 
         void delay_ms(uint32_t ms) {
-            const uint32_t entry_ticks = systicks;
+            const uint32_t entry_ticks {systicks};
             while (systicks - entry_ticks < ms) {
                 __asm("NOP");
             }
