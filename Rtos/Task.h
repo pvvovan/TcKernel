@@ -82,7 +82,7 @@ class TaskBase {
                 p_csa = csa_to_address(p_csa[0]);
             }
 
-            /* Replace task lower CSA in the call stack */
+            /* Replace task lower CSA in the call trace */
             p_csa[0] = loaded_lower_csa;
         }
 };
