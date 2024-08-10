@@ -79,12 +79,13 @@ class STM final
     void Isr(enum ICR irq) {
         if (irq == ICR::Irq_0) {
             this->ISCR = ISCR_CMP0IRR; /* Reset Compare Register CMP0 Interrupt Flag */
+            this->CMP<0>() += TICKS_1MS;
         } else if (irq == ICR::Irq_1) {
             this->ISCR = ISCR_CMP1IRR; /* Reset Compare Register CMP1 Interrupt Flag */
+            this->CMP<1>() += TICKS_1MS;
         } else {
-            /* Unreachable */
+            /* STM has only two interrupt outputs */
         }
-        this->CMP<0>() += TICKS_1MS;
     }
 };
 
