@@ -64,7 +64,7 @@ void core0_main(void)
     for(;;);
 }
 
-void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB0) Stm0SysIsr(void)
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB0) Stm0_SysIsr(void)
 {
     KernelCore0_SysIsr();
 }

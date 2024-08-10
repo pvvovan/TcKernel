@@ -28,6 +28,10 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+#include "KernelDef.h"
+#include "KernelCore5.h"
+
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 volatile uint32 g_Slave5Ready = 0;
@@ -51,5 +55,11 @@ void core5_main(void)
        /* Wait for master core */
    }
 
+   KernelCore5_Start();
    for(;;);
+}
+
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB5) Stm5_SysIsr(void)
+{
+    KernelCore5_SysIsr();
 }

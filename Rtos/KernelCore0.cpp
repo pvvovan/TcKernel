@@ -64,13 +64,16 @@ static void dma_init()
 
 static void task1_c0_blink()
 {
+    kernel.delay_ms(3000); /* Configure STM5 after starting RTOS kernels to avoid race condition */
+    __asm("DISABLE");
     dma_init();
+    __asm("ENABLE");
 
     IfxPort_setPinMode(IfxPort_P33_4.port, IfxPort_P33_4.pinIndex, IfxPort_Mode_outputPushPullGeneral);
     for ( ; ; ) {
         kernel.delay_ms(500);
         IfxPort_setPinState(IfxPort_P33_4.port, IfxPort_P33_4.pinIndex, IfxPort_State_toggled);
-        STM5.CMP<0>() = STM5.TIM<0>() + 0.4 * STM5.TICKS_1MS;
+        STM5.CMP<1>() = STM5.TIM<0>() + 0.4 * STM5.TICKS_1MS;
     }
 }
 

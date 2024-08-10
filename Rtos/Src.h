@@ -16,19 +16,19 @@ enum class SRC_TOS {
 };
 
 /* Service Request Control Register */
-template<uint16_t offset>
+template<uint16_t device_offset>
 class SRC
 {
     private:
         static constexpr uint32_t BASE {0xF0038000uL};
-        static_assert(offset <= 0x00FD0u, "Service Request Control Register is out of range");
+        static_assert(device_offset <= 0x00FD0u, "Service Request Control Register is out of range");
 
 
     public:
-        SRC() = default;
         virtual ~SRC() = default;
 
-        SRC(uint32_t instance) : Reg {*reinterpret_cast<Bits *>(BASE + offset + instance)} { }
+        SRC(uint32_t instance_offset)
+            : R {*reinterpret_cast<Bits *>(BASE + device_offset + instance_offset)} { }
 
         struct Bits {
             uint8_t SRPN    : 8; /* Service Request Priority Number */
@@ -48,13 +48,13 @@ class SRC
             uint8_t         : 1; /* Reserved */
         };
 
-        volatile struct Bits &Reg {*reinterpret_cast<Bits *>(BASE + offset)};
+        volatile struct Bits &R;
 
         void EnableService(uint8_t prio, SRC_TOS tos) {
-            this->Reg.CLRR = 1; /* Clear Service Request */
-            this->Reg.SRPN = prio;
-            this->Reg.TOS = static_cast<uint8_t>(tos);
-            this->Reg.SRE = 1; /* Enable Service Request */
+            this->R.CLRR = 1; /* Clear Service Request */
+            this->R.SRPN = prio;
+            this->R.TOS = static_cast<uint8_t>(tos);
+            this->R.SRE = 1; /* Enable Service Request */
         }
 };
 

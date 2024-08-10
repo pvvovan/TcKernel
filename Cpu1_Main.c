@@ -31,6 +31,7 @@
 #include "KernelDef.h"
 #include "KernelCore1.h"
 
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 volatile uint32 g_Slave1Ready = 0;
@@ -58,7 +59,7 @@ void core1_main(void)
     for(;;);
 }
 
-void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB1) Stm1SysIsr(void)
+void __interrupt(SYS_IRQ_PRIO) __vector_table(VEC_TAB1) Stm1_SysIsr(void)
 {
     KernelCore1_SysIsr();
 }

@@ -28,6 +28,7 @@
 #include "IfxCpu.h"
 #include "IfxScuWdt.h"
 
+
 extern IfxCpu_syncEvent g_cpuSyncEvent;
 
 volatile uint32 g_Slave4Ready = 0;

@@ -1125,9 +1125,11 @@ derivative tc39
                 {
                     select ".data.Ifx_Ssw_Tc5.*";
                     select ".data.Cpu5_Main.*";
+                    select ".data.KernelCore5.*";
                     select "(.data.data_cpu5|.data.data_cpu5.*)";
                     select ".bss.Ifx_Ssw_Tc5.*";
                     select ".bss.Cpu5_Main.*";
+                    select ".bss.KernelCore5.*";
                     select "(.bss.bss_cpu5|.bss.bss_cpu5.*)";
                 }
                 group (ordered, attributes=rw, run_addr=mem:dsram4)

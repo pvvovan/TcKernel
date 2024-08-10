@@ -68,7 +68,7 @@ class Kernel final {
         }
 
         void SysIsr() {
-            stm.Isr();
+            stm.Isr(irq);
             current_task->SaveContext();
             ScheduleTask();
             current_task->LoadContext();
