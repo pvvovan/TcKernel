@@ -1,8 +1,11 @@
 #include "Count.h"
+#include "AtomicMath.h"
 
 
 long long Count::counter{0};
 uint32_t Count::lock {UNLOCKED};
+
+static uint32_t s_intval {0};
 
 void Count::spin_lock() {
     uint64_t val {(static_cast<uint64_t>(UNLOCKED) << 32) | LOCKED};
@@ -34,6 +37,9 @@ void Count::Race() {
         spin_lock();
         Count::counter += 1000;
         spin_unlock();
+
+        atomic_add(&s_intval, 11);
+        atomic_sub(&s_intval, 10);
     }
     for(;;);
 }
