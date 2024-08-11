@@ -1,5 +1,6 @@
 #include "Count.h"
 #include "AtomicMath.h"
+#include "SingleWriter.h"
 
 
 long long Count::counter{0};
@@ -40,6 +41,16 @@ void Count::Race() {
 
         atomic_add(&s_intval, 11);
         atomic_sub(&s_intval, 10);
+
+        static SwmrSyncHandle sync_handle {};
+        {
+            SingleWriterLock write_lock {sync_handle};
+            // do writing here
+        }
+        {
+            MultiReaderLock read_lock {sync_handle};
+            // do reading here
+        }
     }
     for(;;);
 }
