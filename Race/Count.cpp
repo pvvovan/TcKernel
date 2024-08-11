@@ -1,12 +1,13 @@
 #include "Count.h"
-#include "AtomicMath.h"
-#include "SingleWriter.h"
 
 
 long long Count::counter{0};
-uint32_t Count::lock {UNLOCKED};
+uint32_t __align(4) Count::lock {UNLOCKED};
 
-static uint32_t s_intval {0};
+static uint32_t __align(4) s_intval {0};
+
+SwmrSyncHandle __align(4) g_sync_handle {};
+DataPack g_data_pack {1, 2, 4};
 
 void Count::spin_lock() {
     uint64_t val {(static_cast<uint64_t>(UNLOCKED) << 32) | LOCKED};
@@ -42,14 +43,13 @@ void Count::Race() {
         atomic_add(&s_intval, 11);
         atomic_sub(&s_intval, 10);
 
-        static SwmrSyncHandle sync_handle {};
         {
-            SingleWriterLock write_lock {sync_handle};
-            // do writing here
-        }
-        {
-            MultiReaderLock read_lock {sync_handle};
-            // do reading here
+            MultiReaderLock read_lock {g_sync_handle};
+            const DataPack dp = g_data_pack;
+            if (((dp.b - dp.a) != 1) || ((dp.c - dp.b) != 2)) {
+                __asm("DISABLE");
+                for(;;);
+            }
         }
     }
     for(;;);

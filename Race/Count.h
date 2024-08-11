@@ -2,6 +2,7 @@
 #define RACE_COUNT_H_
 
 #include "Task.h"
+#include "SingleWriter.h"
 #include <stdint.h>
 
 class Count
@@ -20,6 +21,10 @@ class Count
         static void Race();
 };
 
+struct DataPack {
+    long a, b, c;
+};
+
 extern Task<256> g_task0_core0;
 extern Task<256> g_task1_core0;
 extern Task<256> g_task2_core0;
@@ -31,5 +36,8 @@ extern Task<256> g_task2_core1;
 extern Task<256> g_task0_core2;
 extern Task<256> g_task1_core2;
 extern Task<256> g_task2_core2;
+
+extern SwmrSyncHandle g_sync_handle;
+extern DataPack g_data_pack;
 
 #endif /* RACE_COUNT_H_ */
