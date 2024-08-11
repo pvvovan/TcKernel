@@ -7,7 +7,7 @@ extern "C" {
 
 #include <stdint.h>
 
-static inline void atomic_add(uint32_t *data, uint32_t val)
+static inline void atomic_add(volatile uint32_t *data, uint32_t val)
 {
     for ( ; ; ) {
         const uint32_t old_data = *data;
@@ -25,7 +25,7 @@ static inline void atomic_add(uint32_t *data, uint32_t val)
     }
 }
 
-static inline void atomic_sub(uint32_t *data, uint32_t val)
+static inline void atomic_sub(volatile uint32_t *data, uint32_t val)
 {
     for ( ; ; ) {
         const uint32_t old_data = *data;

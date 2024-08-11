@@ -5,8 +5,8 @@
 
 
 struct SwmrSyncHandle final {
-    uint32_t n_readers {0};
-    bool write_pending {false};
+    volatile uint32_t n_readers {0};
+    volatile bool write_pending {false};
 
     SwmrSyncHandle()    = default;
     ~SwmrSyncHandle()   = default;
@@ -19,20 +19,20 @@ struct SwmrSyncHandle final {
 class SingleWriterLock final {
   public:
     SingleWriterLock(SwmrSyncHandle& h) : sync_handle{h} {
-        __asm("DISABLE");
+        __asm("DISABLE" : : : "memory");
         sync_handle.write_pending = true;
-        __asm("DSYNC");
+        __asm("DSYNC" : : : "memory");
         while (sync_handle.n_readers != 0) {
-            /* Wait until all readers are finished */
+            /* Wait until all readers finish reading */
         }
-        __asm("DSYNC");
+        __asm("" : : : "memory");
     }
 
     ~SingleWriterLock() {
-        __asm("DSYNC");
+        __asm("" : : : "memory");
         sync_handle.write_pending = false;
-        __asm("ENABLE");
-        __asm("DSYNC");
+        __asm("DSYNC" : : : "memory");
+        __asm("ENABLE" : : : "memory");
     }
 
   private:
@@ -48,17 +48,17 @@ class MultiReaderLock final {
     MultiReaderLock(SwmrSyncHandle& h) : sync_handle{h} {
         for ( ; ; ) {
             while (sync_handle.write_pending) {
-                __asm("NOP");
-                __asm("NOP");
-                __asm("NOP");
+                __asm("NOP" : : : "memory");
+                __asm("NOP" : : : "memory");
+                __asm("NOP" : : : "memory");
             }
-            __asm("DISABLE");
+            __asm("DISABLE" : : : "memory");
             atomic_add(&sync_handle.n_readers, 1);
-            __asm("DSYNC");
+            __asm("DSYNC" : : : "memory");
             if (sync_handle.write_pending) {
                 atomic_sub(&sync_handle.n_readers, 1);
-                __asm("DSYNC");
-                __asm("ENABLE");
+                __asm("DSYNC" : : : "memory");
+                __asm("ENABLE" : : : "memory");
             } else {
                 break;
             }
@@ -68,8 +68,8 @@ class MultiReaderLock final {
     ~MultiReaderLock() {
         __asm("" : : : "memory");
         atomic_sub(&sync_handle.n_readers, 1);
-        __asm("DSYNC");
-        __asm("ENABLE");
+        __asm("DSYNC" : : : "memory");
+        __asm("ENABLE" : : : "memory");
     }
 
   private:
