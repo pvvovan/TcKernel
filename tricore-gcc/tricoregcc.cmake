@@ -32,7 +32,6 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0")
 
 add_compile_options(
 	-fno-common
-	-fdata-sections
 	-ffunction-sections
 	-fstrict-volatile-bitfields
 	-fstack-usage
@@ -55,6 +54,7 @@ add_link_options(
 	-Wl,--cref
 	-Wl,--gc-sections
 	-Wl,-Map=${CMAKE_PROJECT_NAME}.map
+	-Wl,--orphan-handling=error
 	-Wl,--print-memory-usage
 	-Wl,--print-map-locals
 )

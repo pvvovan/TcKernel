@@ -11,4 +11,4 @@ cmake \
 
 cmake \
 	--build "${SCRIPT_DIR}/lbuild" \
-	--verbose
+	--parallel
