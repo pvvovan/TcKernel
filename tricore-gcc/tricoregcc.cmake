@@ -34,6 +34,7 @@ add_compile_options(
 	-fno-common
 	-fdata-sections
 	-ffunction-sections
+	-fstrict-volatile-bitfields
 	-fstack-usage
 	-fcallgraph-info
 	-Wall
