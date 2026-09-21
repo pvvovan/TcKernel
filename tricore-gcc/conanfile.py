@@ -10,8 +10,10 @@ required_conan_version = ">=2.32"
 
 class TriCoreGccConan(ConanFile):
 	name = "tricore-gcc"
-	settings = "arch", "os"
 	version = "13.4.1-0"
+	package_type = "application"
+	settings = "arch", "os"
+	exports = "tricoregcc.cmake"
 	zipfile = None
 
 	def validate(self):
@@ -35,3 +37,15 @@ class TriCoreGccConan(ConanFile):
 			destination = self.package_folder,
 			keep_permissions = True,
 			strip_root = True)
+		copy(self, "tricoregcc.cmake", self.recipe_folder, self.package_folder)
+
+	def package_info(self):
+		self.cpp_info.bindirs = ["bin"]
+		self.cpp_info.includedirs = []
+		self.cpp_info.libdirs = []
+
+		for flags in ["cflags", "cxxflags", "asmflags"]:
+			self.conf_info.append(f"tools.build:{flags}", "-mtc162")
+
+		self.conf_info.define("tools.cmake.cmaketoolchain:user_toolchain",
+					[os.path.join(self.package_folder, "tricoregcc.cmake")])
