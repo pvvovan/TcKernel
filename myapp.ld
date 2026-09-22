@@ -39,9 +39,13 @@ SECTIONS
 		*(.bss*)
 	} > DSPR0
 
-	.debug :
-	{
-		*(.debug_*)
-		*(.comment)
-	}
+	.comment	0 : { *(.comment) }
+	.debug_abbrev	0 : { *(.debug_abbrev) }
+	.debug_aranges	0 : { *(.debug_aranges) }
+	.debug_frame	0 : { *(.debug_frame) }
+	.debug_info	0 : { *(.debug_info) }
+	.debug_line	0 : { *(.debug_line) }
+	.debug_macro	0 : { *(.debug_macro) }
+	.debug_rnglists	0 : { *(.debug_rnglists) }
+	.debug_str	0 : { *(.debug_str) }
 }
