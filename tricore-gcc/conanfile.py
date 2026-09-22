@@ -2,6 +2,7 @@ import os
 import tempfile
 
 from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
 from conan.tools.files import copy, download, unzip
 from urllib.parse import urljoin
 
@@ -49,3 +50,17 @@ class TriCoreGccConan(ConanFile):
 
 		self.conf_info.define("tools.cmake.cmaketoolchain:user_toolchain",
 					[os.path.join(self.package_folder, "tricoregcc.cmake")])
+
+		# TODO: link pthread library statically in tricore-gcc build
+		if self.settings.os == "Windows":
+			import winreg
+			try:
+				reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
+				key = winreg.OpenKey(reg, r"SOFTWARE\GitForWindows")
+				git_install_path, _ = winreg.QueryValueEx(key, "InstallPath")
+				lib_pthread_dir = os.path.join(git_install_path, "mingw64", "bin")
+				if not os.path.isfile(os.path.join(lib_pthread_dir, "libwinpthread-1.dll")):
+					raise ConanInvalidConfiguration("Failed to locate libwinpthread-1.dll")
+				self.buildenv_info.prepend_path("PATH", lib_pthread_dir)
+			except:
+				raise ConanInvalidConfiguration("Failed to find Git")
