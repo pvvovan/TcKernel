@@ -36,7 +36,7 @@ class TriCoreGccConan(ConanFile):
 			filename = self.zipfile,
 			destination = self.package_folder,
 			keep_permissions = True,
-			strip_root = True)
+			strip_root = True if self.settings.os == "Linux" else False)
 		copy(self, "tricoregcc.cmake", self.recipe_folder, self.package_folder)
 
 	def package_info(self):
