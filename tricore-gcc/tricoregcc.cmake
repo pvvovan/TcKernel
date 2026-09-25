@@ -37,9 +37,14 @@ add_compile_options(
 	-fstack-usage
 	-fcallgraph-info
 	-Wall
-	-Wextra
 	-Wconversion
+	-Wdouble-promotion
+	-Wextra
+	-Wformat=2
+	-Wformat-truncation
 	-Wsign-conversion
+	-Wshadow
+	-Wundef
 	$<$<COMPILE_LANGUAGE:ASM>:-x>
 	$<$<COMPILE_LANGUAGE:ASM>:assembler-with-cpp>
 	$<$<COMPILE_LANGUAGE:ASM>:-MMD>
