@@ -1,0 +1,61 @@
+{
+    "version": 10,
+
+    "configurePresets":
+    [
+        {
+            "name": "default",
+            "hidden": true,
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/lbuild",
+            "toolchainFile": "${sourceDir}/lbuild/conan_toolchain.cmake",
+            "cacheVariables": {
+            }
+        },
+        {
+            "name": "Debug",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug"
+            }
+        },
+        {
+            "name": "Release",
+            "inherits": "default",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release"
+            }
+        }
+    ],
+
+    "buildPresets":
+    [
+        {
+            "name": "Debug",
+            "configurePreset": "Debug"
+        },
+        {
+            "name": "Release",
+            "configurePreset": "Release",
+            "jobs": 0
+        }
+    ],
+
+    "workflowPresets":
+    [
+        {
+            "name": "Compile",
+            "steps":
+            [
+                {
+                    "type": "configure",
+                    "name": "Debug"
+                },
+                {
+                    "type": "build",
+                    "name": "Debug"
+                }
+            ]
+        }
+    ]
+}
