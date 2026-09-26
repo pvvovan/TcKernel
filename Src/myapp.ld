@@ -14,7 +14,7 @@ SECTIONS
 {
 	.text 0x80000020 :
 	{
-		*(.startup)
+		*(.start)
 		*(.text*)
 		*(.init)
 		*(.fini)
@@ -39,6 +39,27 @@ SECTIONS
 		*(.bss*)
 	} > DSPR0
 
+	.csa :
+	{
+		. = ALIGN(64);
+		__CSA0 = .;
+		. += 16K;
+		__CSA0_END = .;
+	}
+
+	__USTACK0 = ORIGIN(DSPR0) + LENGTH(DSPR0);
+
+	/* TODO: fix me */
+	__TRAPTAB_CPU0 = 0;
+	__INTTAB_CPU0 = 0;
+	__ISTACK0 = 0;
+	__A0_MEM = 0;
+	__A1_MEM = 0;
+	__A8_MEM = 0;
+	__A9_MEM = 0;
+	__clear_table = 0;
+	__copy_table = 0;
+
 	.comment	0 : { *(.comment) }
 	.debug_abbrev	0 : { *(.debug_abbrev) }
 	.debug_aranges	0 : { *(.debug_aranges) }
@@ -46,6 +67,7 @@ SECTIONS
 	.debug_info	0 : { *(.debug_info) }
 	.debug_line	0 : { *(.debug_line) }
 	.debug_macro	0 : { *(.debug_macro) }
+	.debug_ranges	0 : { *(.debug_ranges) }
 	.debug_rnglists	0 : { *(.debug_rnglists) }
 	.debug_str	0 : { *(.debug_str) }
 }

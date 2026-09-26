@@ -36,6 +36,7 @@ add_compile_options(
 	-fstrict-volatile-bitfields
 	-fstack-usage
 	-fcallgraph-info
+	-save-temps
 	-Wall
 	-Wconversion
 	-Wdouble-promotion

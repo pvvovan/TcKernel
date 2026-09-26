@@ -15,7 +15,7 @@ target_sources(mylib PRIVATE
 )
 
 set(GENERATED_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/myapp.ld)
-set(LINKER_SCRIPT_TEMPLATE ${CMAKE_CURRENT_SOURCE_DIR}/myapp.ld)
+set(LINKER_SCRIPT_TEMPLATE ${CMAKE_CURRENT_SOURCE_DIR}/Src/myapp.ld)
 
 add_custom_command(
 	OUTPUT ${GENERATED_LINKER_SCRIPT}
@@ -32,7 +32,10 @@ add_custom_target(generate_linker_script
 add_executable(myapp)
 
 target_sources(myapp PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/startup.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Cfg_Ssw.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Infra.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/IfxPmsEvr.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Tc0.s
 )
 
 set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
