@@ -59,7 +59,7 @@ add_link_options(
 	-nocrt0
 	-Wl,--cref
 	-Wl,--gc-sections
-	-Wl,-Map=${CMAKE_PROJECT_NAME}.map
+	-Wl,-Map=$<TARGET_PROPERTY:NAME>.map
 	-Wl,--orphan-handling=error
 	-Wl,--print-memory-usage
 	-Wl,--print-map-locals

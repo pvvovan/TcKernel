@@ -12,36 +12,65 @@ MEMORY
 
 SECTIONS
 {
-	.text 0x80000020 :
+	.zbss 0x70000000 :
 	{
-		*(.start)
-		*(.text*)
-		*(.init)
-		*(.fini)
-	} > PFLASH0
-
-	.rodata :
-	{
-		. = ALIGN(8);
-		*(.rodata*)
-	} > PFLASH0
-
-	.data :
-	{
-		. = ALIGN(8);
-		*(.zdata)
-		*(.data*)
-	} > DSPR0 AT > PFLASH0
-
-	.bss :
-	{
-		. = ALIGN(8);
-		*(.bss*)
+		*(.zbss)
+		*(.zbss.*)
 	} > DSPR0
 
-	.csa :
+	.zrodata 0x80000000:
 	{
-		. = ALIGN(64);
+		*(.zrodata);
+		*(.zrodata.*);
+	} > PFLASH0
+
+	.zdata : ALIGN(8)
+	{
+		*(.zdata)
+		*(.zdata.*)
+	} > DSPR0 AT > PFLASH0
+
+	.text : ALIGN(4)
+	{
+		*(.start)
+		*(.init)
+		*(.fini)
+		*(.text)
+		*(.text.*)
+	} > PFLASH0
+
+	.rodata : ALIGN(8)
+	{
+		*(.rodata)
+		*(.rodata.*)
+
+		. = ALIGN(4);
+		__clear_table = .;
+		LONG(ABSOLUTE(ADDR(.bss)));		LONG(SIZEOF(.bss));
+		LONG(ABSOLUTE(ADDR(.zbss)));		LONG(SIZEOF(.zbss));
+		LONG(-1);				LONG(-1);
+
+		. = ALIGN(4);
+		__copy_table = .;
+		LONG(LOADADDR(.zdata));			LONG(ABSOLUTE(ADDR(.zdata)));		LONG(SIZEOF(.zdata));
+		LONG(LOADADDR(.data));			LONG(ABSOLUTE(ADDR(.data)));		LONG(SIZEOF(.data));
+		LONG(-1);				LONG(-1);				LONG(-1);
+	} > PFLASH0
+
+	.data : ALIGN(8)
+	{
+		*(.data)
+		*(.data.*)
+	} > DSPR0 AT > PFLASH0
+
+	.bss : ALIGN(8)
+	{
+		*(.bss)
+		*(.bss.*)
+	} > DSPR0
+
+	.csa : ALIGN(64)
+	{
 		__CSA0 = .;
 		. += 16K;
 		__CSA0_END = .;
@@ -57,15 +86,15 @@ SECTIONS
 	__A1_MEM = 0;
 	__A8_MEM = 0;
 	__A9_MEM = 0;
-	__clear_table = 0;
-	__copy_table = 0;
 
 	.comment	0 : { *(.comment) }
+	.callinfo	0 : { *(.callinfo) }
 	.debug_abbrev	0 : { *(.debug_abbrev) }
 	.debug_aranges	0 : { *(.debug_aranges) }
 	.debug_frame	0 : { *(.debug_frame) }
 	.debug_info	0 : { *(.debug_info) }
 	.debug_line	0 : { *(.debug_line) }
+	.debug_loc	0 : { *(.debug_loc) }
 	.debug_macro	0 : { *(.debug_macro) }
 	.debug_ranges	0 : { *(.debug_ranges) }
 	.debug_rnglists	0 : { *(.debug_rnglists) }
