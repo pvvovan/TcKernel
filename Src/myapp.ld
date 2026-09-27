@@ -4,21 +4,24 @@ ENTRY(_START)
 
 __TRICORE_DERIVATE_MEMORY_MAP__ = 0x380;
 
+DSPR0_START	= 0x70000000;
+PFLASH0_START	= 0x80000000;
+
 MEMORY
 {
-	DSPR0	(w!xp): org = 0x70000000, len = 240K
-	PFLASH0	(rx!p): org = 0x80000000, len = 3M
+	DSPR0	(w!xp): ORIGIN = DSPR0_START,	LENGTH = 240K
+	PFLASH0	(rx!p): ORIGIN = PFLASH0_START,	LENGTH = 3M
 }
 
 SECTIONS
 {
-	.zbss 0x70000000 :
+	.zbss DSPR0_START :
 	{
 		*(.zbss)
 		*(.zbss.*)
 	} > DSPR0
 
-	.zrodata 0x80000000:
+	.zrodata PFLASH0_START :
 	{
 		*(.zrodata);
 		*(.zrodata.*);
