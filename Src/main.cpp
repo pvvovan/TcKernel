@@ -3,6 +3,8 @@ volatile int const ddx __attribute__((section(".zrodata"))) = 2;
 
 int main()
 {
-	myvar += ddx;
+	for ( ; ; ) {
+		myvar += ddx;
+	}
 	return 0;
 }
