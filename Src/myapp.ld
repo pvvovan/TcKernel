@@ -39,6 +39,7 @@ SECTIONS
 		*(.fini)
 		*(.text)
 		*(.text.*)
+		*(.tm_clone_table)
 	} > PFLASH0
 
 	.data : ALIGN(8)
@@ -59,6 +60,16 @@ SECTIONS
 		. += 16K;
 		__CSA0_END = .;
 	}
+
+	.init_array : ALIGN(8)
+	{
+		PROVIDE(__init_start = .);
+		KEEP(*(.init))
+		KEEP(*(.init.*))
+		KEEP(*(.ctors))
+		KEEP(*(.ctors.*))
+		PROVIDE(__init_end = .);
+	} > PFLASH0
 
 	.rodata : ALIGN(8)
 	{
