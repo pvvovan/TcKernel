@@ -6,8 +6,9 @@ __TRICORE_DERIVATE_MEMORY_MAP__ = 0x380;
 
 MEMORY
 {
-	DSPR0	(w!xp): ORIGIN = 0x70000000,	LENGTH = 240K
-	PFLASH0	(rx!p): ORIGIN = 0x80000000,	LENGTH = 3M
+	DSPR0	(w!xp): ORIGIN = 0x70000000, LENGTH = 240K
+	DLMU0	(w!xp): ORIGIN = 0x90000000, LENGTH = 64K
+	PFLASH0	(rx!p): ORIGIN = 0x80000000, LENGTH = 3M
 }
 
 __USTACK0 = ORIGIN(DSPR0) + LENGTH(DSPR0);
@@ -54,6 +55,19 @@ SECTIONS
 		*(.bss.*)
 	} > DSPR0
 
+	.sdata : ALIGN(8)
+	{
+		*(.sdata)
+		*(.sdata.*)
+		. = ALIGN(2);
+	} > DLMU0 AT > PFLASH0
+	.sbss :
+	{
+		*(.sbss)
+		*(.sbss.*)
+	} > DLMU0
+	__A0_MEM = SIZEOF(.sdata) ? ADDR(.sdata) : (ADDR(.sdata) & 0xF0000000) + 32K;
+
 	.csa : ALIGN(64)
 	{
 		__CSA0 = .;
@@ -79,13 +93,15 @@ SECTIONS
 		. = ALIGN(4);
 		__clear_table = .;
 		LONG(ABSOLUTE(ADDR(.bss)));		LONG(SIZEOF(.bss));
+		LONG(ABSOLUTE(ADDR(.sbss)));		LONG(SIZEOF(.sbss));
 		LONG(ABSOLUTE(ADDR(.zbss)));		LONG(SIZEOF(.zbss));
 		LONG(-1);				LONG(-1);
 
 		. = ALIGN(4);
 		__copy_table = .;
-		LONG(LOADADDR(.zdata));			LONG(ABSOLUTE(ADDR(.zdata)));		LONG(SIZEOF(.zdata));
 		LONG(LOADADDR(.data));			LONG(ABSOLUTE(ADDR(.data)));		LONG(SIZEOF(.data));
+		LONG(LOADADDR(.sdata));			LONG(ABSOLUTE(ADDR(.sdata)));		LONG(SIZEOF(.sdata));
+		LONG(LOADADDR(.zdata));			LONG(ABSOLUTE(ADDR(.zdata)));		LONG(SIZEOF(.zdata));
 		LONG(-1);				LONG(-1);				LONG(-1);
 	} > PFLASH0
 
@@ -93,7 +109,6 @@ SECTIONS
 	__TRAPTAB_CPU0 = 0;
 	__INTTAB_CPU0 = 0;
 	__ISTACK0 = 0;
-	__A0_MEM = 0;
 	__A1_MEM = 0;
 	__A8_MEM = 0;
 	__A9_MEM = 0;
