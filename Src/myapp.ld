@@ -80,6 +80,12 @@ SECTIONS
 		__CSA0_END = .;
 	} > DSPR0
 
+	.isr_stack : ALIGN(8)
+	{
+		. += 4K;
+		__ISTACK0 = ABSOLUTE(.);
+	} > DSPR0
+
 	.init_array : ALIGN(8)
 	{
 		PROVIDE(__init_start = .);
@@ -95,6 +101,12 @@ SECTIONS
 		*(.rodata)
 		*(.rodata.*)
 	} > PFLASH0
+
+	.traptab0 : ALIGN(256)
+	{
+		KEEP(*(.traptab0));
+	} > PFLASH0
+	__TRAPTAB_CPU0 = ADDR(.traptab0);
 
 	.init_tables : ALIGN(4)
 	{
@@ -112,9 +124,7 @@ SECTIONS
 	} > PFLASH0
 
 	/* TODO: fix me */
-	__TRAPTAB_CPU0 = 0;
 	__INTTAB_CPU0 = 0;
-	__ISTACK0 = 0;
 	__A1_MEM = 0;
 	__A8_MEM = 0;
 	__A9_MEM = 0;

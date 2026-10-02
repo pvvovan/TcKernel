@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 4.4.3)
 
 project(tcapp LANGUAGES ASM C CXX)
 
-add_library(mylib STATIC)
+add_library(mylib OBJECT)
 
 set_target_properties(mylib PROPERTIES
 	CXX_STANDARD		17
@@ -36,6 +36,7 @@ target_sources(myapp PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Infra.s
 	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/IfxPmsEvr.s
 	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Tc0.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Trap/traptab0.s
 )
 
 set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
