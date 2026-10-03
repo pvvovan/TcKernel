@@ -64,13 +64,14 @@ SECTIONS
 		*(.sdata.*)
 		. = ALIGN(8);
 		__sdata_end = .;
-	} > DLMU0 AT > PFLASH0
+	} > DSPR0 AT > PFLASH0
 
 	.sbss : ALIGN(8)
 	{
 		*(.sbss)
 		*(.sbss.*)
-	} > DLMU0
+		. = ALIGN(8);
+	} > DSPR0
 	__A0_MEM = ADDR(.sdata) + 32K;
 
 	.csa : ALIGN(64)
@@ -137,6 +138,7 @@ SECTIONS
 	.debug_info	0 : { *(.debug_info) }
 	.debug_line	0 : { *(.debug_line) }
 	.debug_loc	0 : { *(.debug_loc) }
+	.debug_loclists	0 : { *(.debug_loclists) }
 	.debug_macro	0 : { *(.debug_macro) }
 	.debug_ranges	0 : { *(.debug_ranges) }
 	.debug_rnglists	0 : { *(.debug_rnglists) }

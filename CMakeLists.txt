@@ -2,7 +2,10 @@ cmake_minimum_required(VERSION 4.4.3)
 
 project(tcapp LANGUAGES ASM C CXX)
 
+add_subdirectory(InfineonLibraries)
+
 add_library(mylib OBJECT)
+add_library(my::lib ALIAS mylib)
 
 set_target_properties(mylib PROPERTIES
 	CXX_STANDARD		17
@@ -32,10 +35,6 @@ add_custom_target(generate_linker_script
 add_executable(myapp)
 
 target_sources(myapp PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Cfg_Ssw.s
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Infra.s
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/IfxPmsEvr.s
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Startup/Ifx_Ssw_Tc0.s
 	${CMAKE_CURRENT_SOURCE_DIR}/Src/Trap/traptab0.s
 )
 
@@ -43,4 +42,7 @@ set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
 target_link_options(myapp PRIVATE -T ${GENERATED_LINKER_SCRIPT})
 add_dependencies(myapp generate_linker_script)
 
-target_link_libraries(myapp PRIVATE mylib)
+target_link_libraries(myapp PRIVATE
+	IFX::ILLD
+	my::lib
+)
