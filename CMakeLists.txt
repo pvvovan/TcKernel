@@ -4,17 +4,35 @@ project(tcapp LANGUAGES ASM C CXX)
 
 add_subdirectory(InfineonLibraries)
 
-add_library(mylib OBJECT)
-add_library(my::lib ALIAS mylib)
+set(FREERTOS_HEAP "4" CACHE STRING "" FORCE)
+set(FREERTOS_PORT "A_CUSTOM_PORT" CACHE STRING "" FORCE)
+add_subdirectory(FreeRTOS-Config)
+add_subdirectory(FreeRTOS-Port)
+add_subdirectory(FreeRTOS-Kernel)
 
-set_target_properties(mylib PROPERTIES
-	CXX_STANDARD		17
+set_target_properties(freertos_kernel PROPERTIES
+	C_STANDARD		17
+	C_STANDARD_REQUIRED	ON
+	C_EXTENSIONS		OFF
+)
+
+add_executable(myapp)
+
+set_target_properties(myapp PROPERTIES
+	CXX_STANDARD		23
 	CXX_STANDARD_REQUIRED	ON
 	CXX_EXTENSIONS		OFF
 )
 
-target_sources(mylib PRIVATE
+target_sources(myapp PRIVATE
 	${CMAKE_CURRENT_SOURCE_DIR}/Src/main.cpp
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Isr/inttab0.s
+	${CMAKE_CURRENT_SOURCE_DIR}/Src/Trap/traptab0.s
+)
+
+target_link_libraries(myapp PRIVATE
+	freertos_kernel
+	IFX::ILLD
 )
 
 set(GENERATED_LINKER_SCRIPT ${CMAKE_BINARY_DIR}/myapp.ld)
@@ -32,17 +50,6 @@ add_custom_target(generate_linker_script
 	DEPENDS ${GENERATED_LINKER_SCRIPT}
 )
 
-add_executable(myapp)
-
-target_sources(myapp PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Trap/traptab0.s
-)
-
 set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
 target_link_options(myapp PRIVATE -T ${GENERATED_LINKER_SCRIPT})
 add_dependencies(myapp generate_linker_script)
-
-target_link_libraries(myapp PRIVATE
-	IFX::ILLD
-	my::lib
-)

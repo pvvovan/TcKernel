@@ -64,14 +64,13 @@ SECTIONS
 		*(.sdata.*)
 		. = ALIGN(8);
 		__sdata_end = .;
-	} > DSPR0 AT > PFLASH0
+	} > DLMU0 AT > PFLASH0
 
 	.sbss : ALIGN(8)
 	{
 		*(.sbss)
 		*(.sbss.*)
-		. = ALIGN(8);
-	} > DSPR0
+	} > DLMU0
 	__A0_MEM = ADDR(.sdata) + 32K;
 
 	.csa : ALIGN(64)
@@ -109,6 +108,12 @@ SECTIONS
 	} > PFLASH0
 	__TRAPTAB_CPU0 = ADDR(.traptab0);
 
+	.inttab0 : ALIGN(256)
+	{
+		KEEP(*(.inttab0));
+	} > PFLASH0
+	__INTTAB_CPU0 = ADDR(.inttab0);
+
 	.init_tables : ALIGN(4)
 	{
 		__clear_table = .;
@@ -125,7 +130,6 @@ SECTIONS
 	} > PFLASH0
 
 	/* TODO: fix me */
-	__INTTAB_CPU0 = 0;
 	__A1_MEM = 0;
 	__A8_MEM = 0;
 	__A9_MEM = 0;

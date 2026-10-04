@@ -29,7 +29,11 @@ __trap_vector_5: /* Assertion Traps (Trap Class 5) */
 
 	.balign 32
 __trap_vector_6: /* System Call (Trap Class 6) */
-	6: loopu 6b
+	svlcx
+	mov %d4, %d15
+	call vPortSyscallHandler
+	rslcx
+	rfe
 
 	.balign 32
 __trap_vector_7: /* Non-Maskable Interrupt (Trap Class 7) */

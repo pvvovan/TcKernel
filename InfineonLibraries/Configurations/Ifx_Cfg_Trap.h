@@ -31,4 +31,4 @@
  
  #include "DAVE.h"
  
- #endif /* IFX_CFG_TRAP_H */
+ #endif /* IFX_CFG_TRAP_H */
