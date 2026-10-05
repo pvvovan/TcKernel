@@ -70,6 +70,6 @@
 #define configCONTEXT_SRC                   ( ( uint32_t * ) 0xF0038990 )
 
 #define configCPU_STM_DEBUG	0
-#define configTICK_STM_DEBUG	0
+#define configTICK_STM_DEBUG	1
 
 #endif /* FREERTOS_CONFIG_H */

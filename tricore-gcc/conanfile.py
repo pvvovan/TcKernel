@@ -53,14 +53,26 @@ class TriCoreGccConan(ConanFile):
 
 		# TODO: link pthread library statically in tricore-gcc build
 		if self.settings.os == "Windows":
-			import winreg
+			git_install_path = self._get_git_install_path()
+			lib_pthread_dir = os.path.join(git_install_path, "mingw64", "bin")
+			if not os.path.isfile(os.path.join(lib_pthread_dir, "libwinpthread-1.dll")):
+				raise ConanInvalidConfiguration("Failed to locate libwinpthread-1.dll")
+			self.buildenv_info.prepend_path("PATH", lib_pthread_dir)
+
+	def _get_git_install_path(self):
+		import winreg
+		targets = [
+			(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\GitForWindows", winreg.KEY_WOW64_64KEY),
+			(winreg.HKEY_CURRENT_USER, r"SOFTWARE\GitForWindows", 0),
+			(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\GitForWindows", winreg.KEY_WOW64_32KEY)
+		]
+
+		for hive, path, flag in targets:
 			try:
-				reg = winreg.ConnectRegistry(None, winreg.HKEY_LOCAL_MACHINE)
-				key = winreg.OpenKey(reg, r"SOFTWARE\GitForWindows")
+				key = winreg.OpenKey(hive, path, 0, winreg.KEY_READ | flag)
 				git_install_path, _ = winreg.QueryValueEx(key, "InstallPath")
-				lib_pthread_dir = os.path.join(git_install_path, "mingw64", "bin")
-				if not os.path.isfile(os.path.join(lib_pthread_dir, "libwinpthread-1.dll")):
-					raise ConanInvalidConfiguration("Failed to locate libwinpthread-1.dll")
-				self.buildenv_info.prepend_path("PATH", lib_pthread_dir)
-			except:
-				raise ConanInvalidConfiguration("Failed to find Git")
+				return git_install_path
+			except FileNotFoundError:
+				continue
+
+		raise FileNotFoundError("Git for Windows registry key could not be found in HKLM or HKCU.")
