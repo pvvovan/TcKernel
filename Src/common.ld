@@ -1,0 +1,3 @@
+OUTPUT_FORMAT("elf32-tricore")
+OUTPUT_ARCH(tricore)
+__TRICORE_DERIVATE_MEMORY_MAP__ = 0x380;

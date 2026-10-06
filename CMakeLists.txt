@@ -53,3 +53,4 @@ add_custom_target(generate_linker_script
 set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
 target_link_options(myapp PRIVATE -T ${GENERATED_LINKER_SCRIPT})
 add_dependencies(myapp generate_linker_script)
+target_link_directories(myapp PRIVATE ${tcapp_SOURCE_DIR}/Src)
