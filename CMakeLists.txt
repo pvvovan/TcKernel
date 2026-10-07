@@ -25,9 +25,9 @@ set_target_properties(myapp PROPERTIES
 )
 
 target_sources(myapp PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/main.cpp
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Isr/inttab0.s
-	${CMAKE_CURRENT_SOURCE_DIR}/Src/Trap/traptab0.s
+	Src/main.cpp
+	Src/Isr/inttab0.s
+	Src/Trap/traptab0.s
 )
 
 target_link_libraries(myapp PRIVATE
@@ -41,6 +41,7 @@ set(LINKER_SCRIPT_TEMPLATE ${CMAKE_CURRENT_SOURCE_DIR}/Src/myapp.ld)
 add_custom_command(
 	OUTPUT ${GENERATED_LINKER_SCRIPT}
 	DEPENDS ${LINKER_SCRIPT_TEMPLATE}
+		${CMAKE_CURRENT_SOURCE_DIR}/Src/common.ld
 	COMMAND ${CMAKE_C_COMPILER} -undef -E -P -x c
 		"${LINKER_SCRIPT_TEMPLATE}"
 		-o "${GENERATED_LINKER_SCRIPT}"
@@ -50,7 +51,7 @@ add_custom_target(generate_linker_script
 	DEPENDS ${GENERATED_LINKER_SCRIPT}
 )
 
-set_target_properties(myapp PROPERTIES LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
+set_property(TARGET myapp APPEND PROPERTY LINK_DEPENDS ${GENERATED_LINKER_SCRIPT})
 target_link_options(myapp PRIVATE -T ${GENERATED_LINKER_SCRIPT})
 add_dependencies(myapp generate_linker_script)
 target_link_directories(myapp PRIVATE ${tcapp_SOURCE_DIR}/Src)

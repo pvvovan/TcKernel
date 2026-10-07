@@ -46,8 +46,7 @@ add_compile_options(
 	-Wsign-conversion
 	-Wshadow
 	-Wundef
-	$<$<COMPILE_LANGUAGE:ASM>:-x>
-	$<$<COMPILE_LANGUAGE:ASM>:assembler-with-cpp>
+	"$<$<COMPILE_LANGUAGE:ASM>:SHELL:-x assembler-with-cpp>"
 	$<$<COMPILE_LANGUAGE:ASM>:-MMD>
 	$<$<COMPILE_LANGUAGE:ASM>:-MP>
 	$<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>

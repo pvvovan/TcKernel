@@ -7,7 +7,7 @@ set_target_properties(freertos_kernel_port PROPERTIES
 )
 
 target_sources(freertos_kernel_port PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/port.c
+	port.c
 )
 
 add_library(freertos_kernel_port_headers INTERFACE)

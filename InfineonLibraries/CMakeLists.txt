@@ -8,25 +8,25 @@ set_target_properties(ifx_obj PROPERTIES
 )
 
 target_sources(ifx_obj PRIVATE
-	${CMAKE_CURRENT_SOURCE_DIR}/Configurations/Ifx_Cfg_Ssw.c
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/Pms/Std/IfxPmsEvr.c
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/Scu/Std/IfxScuCcu.c
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/Scu/Std/IfxScuWdt.c
-	${CMAKE_CURRENT_SOURCE_DIR}/Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Tc0.c
-	${CMAKE_CURRENT_SOURCE_DIR}/Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Infra.c
+	Configurations/Ifx_Cfg_Ssw.c
+	iLLD/TC3xx/Tricore/Pms/Std/IfxPmsEvr.c
+	iLLD/TC3xx/Tricore/Scu/Std/IfxScuCcu.c
+	iLLD/TC3xx/Tricore/Scu/Std/IfxScuWdt.c
+	Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Tc0.c
+	Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Infra.c
 )
 
 target_include_directories(ifx_obj PUBLIC
-	${CMAKE_CURRENT_SOURCE_DIR}/Configurations
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/_PinMap
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/_PinMap/TC37x
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/Pms/Std
-	${CMAKE_CURRENT_SOURCE_DIR}/iLLD/TC3xx/Tricore/Scu/Std
-	${CMAKE_CURRENT_SOURCE_DIR}/Infra/Platform
-	${CMAKE_CURRENT_SOURCE_DIR}/Infra/Sfr/TC37x
-	${CMAKE_CURRENT_SOURCE_DIR}/Infra/Ssw/TC3xx/Tricore
-	${CMAKE_CURRENT_SOURCE_DIR}/Service/CpuGeneric
+	Configurations
+	iLLD/TC3xx/Tricore
+	iLLD/TC3xx/Tricore/_PinMap
+	iLLD/TC3xx/Tricore/_PinMap/TC37x
+	iLLD/TC3xx/Tricore/Pms/Std
+	iLLD/TC3xx/Tricore/Scu/Std
+	Infra/Platform
+	Infra/Sfr/TC37x
+	Infra/Ssw/TC3xx/Tricore
+	Service/CpuGeneric
 )
 
 target_compile_options(ifx_obj PRIVATE
