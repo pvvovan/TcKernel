@@ -579,25 +579,15 @@ boolean IfxScuCcu_init(const IfxScuCcu_Config *config)
     }
 
 #if (IFX_SCU_FLASHWAITSTATECHECK == 1)
+    Ifx_DMU_HF_PWAIT pwait;
+    pwait.U  = DMU_HF_PWAIT.U;
+    pwait.U &= ~(config->flashFconWaitStateConfig->mask);
+    pwait.U |= (config->flashFconWaitStateConfig->value);
 
-    if (&config->flashFconWaitStateConfig != ((void *)0))
-
-    {
-        Ifx_DMU_HF_PWAIT pwait;
-        pwait.U  = DMU_HF_PWAIT.U;
-        pwait.U &= ~(config->flashFconWaitStateConfig->mask);
-        pwait.U |= (config->flashFconWaitStateConfig->value);
-
-        /* Clear endinit protection */
-        uint16 endInitPW;
-        endInitPW = IfxScuWdt_getCpuWatchdogPassword();
-        IfxScuWdt_clearCpuEndinit(endInitPW);
-
-        DMU_HF_PWAIT.U = pwait.U;
-        /* Set the endinit protection again */
-        IfxScuWdt_setCpuEndinit(endInitPW);
-    }
-
+    uint16 endInitPW = IfxScuWdt_getCpuWatchdogPassword();
+    IfxScuWdt_clearCpuEndinit(endInitPW);
+    DMU_HF_PWAIT.U = pwait.U;
+    IfxScuWdt_setCpuEndinit(endInitPW);
 #endif
 
     if (!status)
