@@ -29,6 +29,8 @@
 #ifndef IFXCPU_INTRINSICS_H
 #define IFXCPU_INTRINSICS_H
 /******************************************************************************/
+#include <stdint.h>
+
 #include "Ifx_Types.h"
 
 #if defined(__DCC__)
@@ -78,7 +80,7 @@
 IFX_INLINE void *__cx_to_addr(uint32 cx)
 {
     uint32 seg_nr = __extru(cx, 16, 4);
-    return (void *)__insert(seg_nr << 28, cx, 6, 16);
+    return (void *)(uintptr_t)__insert(seg_nr << 28, cx, 6, 16);
 }
 
 

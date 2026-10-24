@@ -181,6 +181,10 @@ float Ifx_Ssw_getStmFrequency(void)
     return sourcefreq / SCU_CCUCON0.B.STMDIV;
 }
 
+#if defined(__GNUC__) && !defined(__HIGHTEC__)
+    extern void _init(void); /* cpp initialization */
+#endif
+
 void Ifx_Ssw_doCppInit(void)
 {
     Ifx_Ssw_C_InitInline();
@@ -192,7 +196,6 @@ void Ifx_Ssw_doCppInit(void)
 		extern void _init(void); /* cpp initialization */
 		_init();
 	#elif defined(__GNUC__) && !defined(__HIGHTEC__)
-		extern void _init(void); /* cpp initialization */
 		_init();
 	#elif defined(__HIGHTEC__) && defined(__clang__) /* cpp initialization */
 		extern void __libc_init_array(void);
@@ -206,6 +209,10 @@ void Ifx_Ssw_doCppInit(void)
 	#endif
 }
 
+#if defined(__GNUC__) && !defined(__HIGHTEC__)
+    extern void exit(int); /* cpp deinitialization */
+#endif
+
 void Ifx_Ssw_doCppExit(int status)
 {
 	#ifdef __TASKING__
@@ -215,7 +222,6 @@ void Ifx_Ssw_doCppExit(int status)
 		extern void exit(int); /* cpp deinitialization */
 		exit(status);
 	#elif defined(__GNUC__) && !defined(__HIGHTEC__)
-		extern void exit(int); /* cpp deinitialization */
 		exit(status);
 	#elif defined(__HIGHTEC__) && defined(__clang__)
 		extern void exit(int); /* cpp deinitialization */

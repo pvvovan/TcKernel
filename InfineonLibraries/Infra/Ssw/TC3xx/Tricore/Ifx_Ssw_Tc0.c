@@ -272,6 +272,7 @@ static void __StartUpSoftware_Phase6(void)
     Ifx_Ssw_jumpToFunction(__Core0_start);
 }
 
+extern void core0_main(void);
 
 static void __Core0_start(void)
 {
@@ -341,7 +342,6 @@ static void __Core0_start(void)
         Ifx_Ssw_doCppExit(status);
     }
 #else /* IFX_CFG_SSW_RETURN_FROM_MAIN */
-    extern void core0_main(void);
     Ifx_Ssw_jumpToFunction(core0_main);    /* Jump to main function of CPU0 */
 #endif /* IFX_CFG_SSW_RETURN_FROM_MAIN */
 
@@ -369,7 +369,7 @@ static void __Core0_start(void)
 #elif defined(__ghs__)
 #pragma ghs section text=".start"
 #endif
-
+void _START(void);
 void _START(void)
 {
 	Ifx_Ssw_Start(__USTACK(0), __StartUpSoftware);

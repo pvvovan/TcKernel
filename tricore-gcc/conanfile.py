@@ -11,7 +11,7 @@ required_conan_version = ">=2.32"
 
 class TriCoreGccConan(ConanFile):
 	name = "tricore-gcc"
-	version = "13.4.1-1"
+	version = "13.4.1-2"
 	package_type = "application"
 	settings = "arch", "os"
 	exports = "tricoregcc.cmake"
@@ -24,8 +24,9 @@ class TriCoreGccConan(ConanFile):
 			raise ConanInvalidConfiguration("GCC binaries are only provided for Windows and Linux")
 
 	def build(self):
-		source_entry = self.conan_data["sources"]["v13.4.1"][str(self.settings.os)]
-		self.zipfile = os.path.join(tempfile.gettempdir(), "tricore-gcc-tempdir", source_entry["file"])
+		tag = "a13.4.1"
+		source_entry = self.conan_data["sources"][tag][str(self.settings.os)]
+		self.zipfile = os.path.join(tempfile.gettempdir(), "tricore-gcc-tempdir", tag + source_entry["file"])
 		if not os.path.isfile(self.zipfile):
 			download(self,
 				url = urljoin(source_entry["url"], source_entry["file"]),
@@ -50,29 +51,3 @@ class TriCoreGccConan(ConanFile):
 
 		self.conf_info.define("tools.cmake.cmaketoolchain:user_toolchain",
 					[os.path.join(self.package_folder, "tricoregcc.cmake")])
-
-		# TODO: link pthread library statically in tricore-gcc build
-		if self.settings.os == "Windows":
-			git_install_path = self._get_git_install_path()
-			lib_pthread_dir = os.path.join(git_install_path, "mingw64", "bin")
-			if not os.path.isfile(os.path.join(lib_pthread_dir, "libwinpthread-1.dll")):
-				raise ConanInvalidConfiguration("Failed to locate libwinpthread-1.dll")
-			self.buildenv_info.prepend_path("PATH", lib_pthread_dir)
-
-	def _get_git_install_path(self):
-		import winreg
-		targets = [
-			(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\GitForWindows", winreg.KEY_WOW64_64KEY),
-			(winreg.HKEY_CURRENT_USER, r"SOFTWARE\GitForWindows", 0),
-			(winreg.HKEY_LOCAL_MACHINE, r"SOFTWARE\GitForWindows", winreg.KEY_WOW64_32KEY)
-		]
-
-		for hive, path, flag in targets:
-			try:
-				key = winreg.OpenKey(hive, path, 0, winreg.KEY_READ | flag)
-				git_install_path, _ = winreg.QueryValueEx(key, "InstallPath")
-				return git_install_path
-			except FileNotFoundError:
-				continue
-
-		raise FileNotFoundError("Git for Windows registry key could not be found in HKLM or HKCU.")

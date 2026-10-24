@@ -298,7 +298,7 @@ void IfxScuWdt_clearSafetyEndinit(uint16 password)
 void IfxScuWdt_disableCpuWatchdog(uint16 password)
 {
     /* Select CPU Watchdog based on Core Id */
-    uint32          coreId = (uint32)IfxCpu_getCoreIndex();
+    IfxCpu_ResourceCpu coreId = IfxCpu_getCoreIndex();
     Ifx_SCU_WDTCPU *wdt    = &MODULE_SCU.WDTCPU[coreId];
 
     IfxScuWdt_clearCpuEndinitInline(wdt, password);
@@ -318,7 +318,7 @@ void IfxScuWdt_disableSafetyWatchdog(uint16 password)
 void IfxScuWdt_enableCpuWatchdog(uint16 password)
 {
     /* Select CPU Watchdog based on Core Id */
-    uint32          coreId = (uint32)IfxCpu_getCoreIndex();
+    IfxCpu_ResourceCpu coreId = IfxCpu_getCoreIndex();
     Ifx_SCU_WDTCPU *wdt    = &MODULE_SCU.WDTCPU[coreId];
 
     IfxScuWdt_clearCpuEndinitInline(wdt, password);

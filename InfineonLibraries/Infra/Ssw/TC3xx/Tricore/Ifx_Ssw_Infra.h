@@ -634,7 +634,10 @@ IFX_SSW_INLINE void Ifx_Ssw_initCSA(unsigned int *csaBegin, unsigned int *csaEnd
         nxtCsa += IFX_SSW_CSA_SIZE; /* next CSA */
     }
 
-    *prvCsa = 0U;                   /* Store null pointer in last CSA (= very first time!) */
+    if (prvCsa != NULL)
+    {
+        *prvCsa = 0U;                   /* Store null pointer in last CSA (= very first time!) */
+    }
 
     Ifx_Ssw_DSYNC();
 }

@@ -32,6 +32,7 @@ set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0")
 
 add_compile_options(
 	-fno-common
+	-fdata-sections
 	-ffunction-sections
 	-fstrict-volatile-bitfields
 	-fstack-usage
@@ -40,18 +41,36 @@ add_compile_options(
 	-Wall
 	-Wconversion
 	-Wdouble-promotion
+	-Wduplicated-branches
+	-Wduplicated-cond
 	-Wextra
 	-Wformat=2
 	-Wformat-truncation
+	-Wlogical-op
+	-Wmissing-declarations
+	-Wnull-dereference
+	-Wpointer-arith
+	-Wredundant-decls
 	-Wsign-conversion
 	-Wshadow
 	-Wundef
+	-Wvla
 	"$<$<COMPILE_LANGUAGE:ASM>:SHELL:-x assembler-with-cpp>"
 	$<$<COMPILE_LANGUAGE:ASM>:-MMD>
 	$<$<COMPILE_LANGUAGE:ASM>:-MP>
+	$<$<COMPILE_LANGUAGE:C>:-Wbad-function-cast>
+	$<$<COMPILE_LANGUAGE:C>:-Wmissing-prototypes>
+	$<$<COMPILE_LANGUAGE:C>:-Wnested-externs>
+	$<$<COMPILE_LANGUAGE:C>:-Wold-style-definition>
+	$<$<COMPILE_LANGUAGE:C>:-Wstrict-prototypes>
+	$<$<COMPILE_LANGUAGE:C>:-Wwrite-strings>
 	$<$<COMPILE_LANGUAGE:CXX>:-fno-exceptions>
 	$<$<COMPILE_LANGUAGE:CXX>:-fno-rtti>
 	$<$<COMPILE_LANGUAGE:CXX>:-fno-threadsafe-statics>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wextra-semi>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wnon-virtual-dtor>
+	$<$<COMPILE_LANGUAGE:CXX>:-Wold-style-cast>
+	$<$<COMPILE_LANGUAGE:CXX>:-Woverloaded-virtual>
 )
 
 add_link_options(

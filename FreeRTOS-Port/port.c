@@ -94,7 +94,7 @@ BaseType_t xPortStartScheduler( void )
     return 0;
 }
 
-void vPortEndScheduler()
+void vPortEndScheduler(void)
 {
     pxStmSrc[ 0 ] &= (uint32_t)~( 1 << portSRC_SRCR_SRE_OFF );
     pxContextSrc[ 0 ] &= (uint32_t)~( 1 << portSRC_SRCR_SRE_OFF );
@@ -163,7 +163,8 @@ StackType_t *pxPortInitialiseStack( StackType_t * pxTopOfStack,
     return pxTopOfStack;
 }
 
-void __attribute__( ( interrupt_handler ) ) vPortSystemContextHandler()
+void __attribute__( ( interrupt_handler ) ) vPortSystemContextHandler(void);
+void __attribute__( ( interrupt_handler ) ) vPortSystemContextHandler(void)
 {
     /* Disable interrupts to protect section*/
     _disable();
@@ -189,7 +190,8 @@ __asm__ (
                                                                                                                                                              " .org 32\n"
                                                                                                                                                              " .popsection\n" );
 
-void __attribute__( ( interrupt_handler ) ) vPortSystemTickHandler()
+void __attribute__( ( interrupt_handler ) ) vPortSystemTickHandler(void);
+void __attribute__( ( interrupt_handler ) ) vPortSystemTickHandler(void)
 {
     unsigned long ulSavedInterruptMask;
     BaseType_t xYieldRequired;
@@ -231,6 +233,7 @@ __asm__ (
 
 void __attribute__( ( noinline ) ) vPortSyscallYield( void );
 
+int vPortSyscallHandler( unsigned char id );
 int vPortSyscallHandler( unsigned char id )
 {
     switch( id )
@@ -246,7 +249,7 @@ int vPortSyscallHandler( unsigned char id )
     return 0;
 }
 
-void vPortInitTickTimer()
+void vPortInitTickTimer(void)
 {
     pxStm[ portSTM_COMCON >> 2 ] =
         ( 0 << portSTM_CMCON_MSTART0_OFF ) | ( 31 << portSTM_CMCON_MSIZE0_OFF );
@@ -264,7 +267,7 @@ void vPortInitTickTimer()
     #endif
 }
 
-void vPortInitContextSrc()
+void vPortInitContextSrc(void)
 {
     pxContextSrc[ 0 ] =
         ( ( configCPU_NR > 0 ?
@@ -273,7 +276,7 @@ void vPortInitContextSrc()
     pxContextSrc[ 0 ] |= ( 1 << portSRC_SRCR_SRE_OFF );
 }
 
-void vPortStartFirstTask()
+void vPortStartFirstTask(void)
 {
     /* Disable interrupts  */
     _disable();
@@ -375,7 +378,7 @@ void vPortSaveContext( unsigned char ucCallDepth )
     **ppxTopOfStack = uxLowerCSA;
 }
 
-void vPortSyscallYield()
+void vPortSyscallYield(void)
 {
     /* Do a save, switch, execute */
     vPortSaveContext( configSYSCALL_CALL_DEPTH );
@@ -475,6 +478,7 @@ void vPortReclaimCSA( unsigned long ** pxTCB )
     _enable();
 }
 
+void __attribute__( ( noreturn ) ) vPortLoopForever( void );
 void __attribute__( ( noreturn ) ) vPortLoopForever( void )
 {
     while( 1 )

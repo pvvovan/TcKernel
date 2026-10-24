@@ -1,6 +1,13 @@
 #include "FreeRTOS.h"
 #include "task.h"
 
+template <typename T>
+constexpr TickType_t ms_to_ticks(T xTimeInMs) {
+	return static_cast<TickType_t>(
+		(static_cast<uint64_t>(xTimeInMs) * static_cast<uint64_t>(configTICK_RATE_HZ)) / 1000ULL
+	);
+}
+
 __attribute__((section(".zdata"))) volatile int myvar = 1;
 __attribute__((section(".zbss"))) volatile int myzero;
 __attribute__((section(".zrodata"))) volatile int const ddx = 2;
@@ -8,7 +15,7 @@ __attribute__((section(".zrodata"))) volatile int const ddx = 2;
 __attribute__((section(".sdata"))) volatile long A0example = 20;
 __attribute__((section(".sbss"))) volatile long A0example2;
 
-long getval()
+static long getval()
 {
 	volatile long v = 1;
 	volatile long *p = &v;
@@ -20,23 +27,23 @@ long getval()
 
 volatile int myval = getval();
 
-void task_1(void *arg)
+static void task_1(void *arg)
 {
 	(void)arg;
 	TickType_t lastWakeTime = xTaskGetTickCount();
-	const TickType_t period = pdMS_TO_TICKS(1000);
+	const TickType_t period = ms_to_ticks(1000);
 	for ( ; ; ) {
 		xTaskDelayUntil(&lastWakeTime, period);
 		A0example2 = getval();
 	}
 }
 
-void task_2(void *arg)
+static void task_2(void *arg)
 {
 	(void)arg;
-	vTaskDelay(pdMS_TO_TICKS(500));
+	vTaskDelay(ms_to_ticks(500));
 	TickType_t lastWakeTime = xTaskGetTickCount();
-	const TickType_t period = pdMS_TO_TICKS(1000);
+	const TickType_t period = ms_to_ticks(1000);
 	for ( ; ; ) {
 		xTaskDelayUntil(&lastWakeTime, period);
 		myzero += 1;
