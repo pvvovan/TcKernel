@@ -3,6 +3,7 @@ if ($env:VIRTUAL_ENV) {
 }
 
 & {
+	Push-Location "$PSScriptRoot"
 	cd "$PSScriptRoot"
 	python -m venv pvenv --clear
 	& pvenv\Scripts\Activate.ps1
@@ -11,4 +12,6 @@ if ($env:VIRTUAL_ENV) {
 	& lbuild\conanbuild.ps1
 
 	cmake --workflow --preset=Compile
+
+	Pop-Location
 }
