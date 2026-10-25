@@ -6,12 +6,12 @@ from conan.errors import ConanInvalidConfiguration
 from conan.tools.files import copy, download, unzip
 from urllib.parse import urljoin
 
-required_conan_version = ">=2.32"
+required_conan_version = ">=2.33"
 
 
 class TriCoreGccConan(ConanFile):
 	name = "tricore-gcc"
-	version = "13.4.1-2"
+	version = "13.4.1-3"
 	package_type = "application"
 	settings = "arch", "os"
 	exports = "tricoregcc.cmake"
@@ -24,7 +24,7 @@ class TriCoreGccConan(ConanFile):
 			raise ConanInvalidConfiguration("GCC binaries are only provided for Windows and Linux")
 
 	def build(self):
-		tag = "a13.4.1"
+		tag = "b13.4.1"
 		source_entry = self.conan_data["sources"][tag][str(self.settings.os)]
 		self.zipfile = os.path.join(tempfile.gettempdir(), "tricore-gcc-tempdir", tag + source_entry["file"])
 		if not os.path.isfile(self.zipfile):

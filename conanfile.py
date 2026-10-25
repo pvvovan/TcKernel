@@ -11,7 +11,7 @@ class TcApp(ConanFile):
 	def requirements(self):
 		self.tool_requires("cmake/4.4.4")
 		self.tool_requires("ninja/1.13.2")
-		self.tool_requires("tricore-gcc/13.4.1-2@tc/gcc")
+		self.tool_requires("tricore-gcc/13.4.1-3@tc/gcc")
 
 	def generate(self):
 		tc = CMakeToolchain(self)

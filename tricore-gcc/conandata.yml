@@ -17,3 +17,12 @@ sources:
       file: tricore-gcc-13.4.1-linux.tar.gz
       url: https://github.com/pvvovan/tricore-gcc-toolchain/releases/download/a13.4.1/
       sha256: fcca7e5dc21ca357f6f8a8a795812a703fbf36a3f7704f19dca6ebc9900c28fc
+  "b13.4.1":
+    Windows:
+      file: tricore-gcc-13.4.1-win32.zip
+      url: https://github.com/pvvovan/tricore-gcc-toolchain/releases/download/b13.4.1/
+      sha256: 6bab72f5e3c7c2fb95f8ecbb3fb956b37a7f9e43ff762a83e7c6a72a154c1403
+    Linux:
+      file: tricore-gcc-13.4.1-linux.tar.gz
+      url: https://github.com/pvvovan/tricore-gcc-toolchain/releases/download/b13.4.1/
+      sha256: a654ff1b4537eee1b1505cace0923d8dcebabcc3ebd3c378b48d749c669c5c2f
