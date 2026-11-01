@@ -22,21 +22,24 @@ set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)
 set(CMAKE_FIND_ROOT_PATH_MODE_PROGRAM NEVER)
 
 # search headers and libraries in the target environment
-set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 set(CMAKE_FIND_ROOT_PATH_MODE_INCLUDE ONLY)
+set(CMAKE_FIND_ROOT_PATH_MODE_LIBRARY ONLY)
 
-set(CMAKE_C_FLAGS_DEBUG "-O0 -g3 -gdwarf-5")
-set(CMAKE_C_FLAGS_RELEASE "-O3 -g0")
-set(CMAKE_CXX_FLAGS_DEBUG "-O0 -g3 -gdwarf-5")
-set(CMAKE_CXX_FLAGS_RELEASE "-O3 -g0")
+set(TRICORE_DEBUG_OPTIONS	"-O0 -g3 -gdwarf-5")
+set(TRICORE_RELEASE_OPTIONS	"-O3 -g0")
+
+set(CMAKE_C_FLAGS_DEBUG		${TRICORE_DEBUG_OPTIONS})
+set(CMAKE_C_FLAGS_RELEASE	${TRICORE_RELEASE_OPTIONS})
+set(CMAKE_CXX_FLAGS_DEBUG	${TRICORE_DEBUG_OPTIONS})
+set(CMAKE_CXX_FLAGS_RELEASE	${TRICORE_RELEASE_OPTIONS})
 
 add_compile_options(
-	-fno-common
+	-fcallgraph-info=su
 	-fdata-sections
 	-ffunction-sections
-	-fstrict-volatile-bitfields
+	-fno-common
 	-fstack-usage
-	-fcallgraph-info
+	-fstrict-volatile-bitfields
 	-save-temps
 	-Wall
 	-Wconversion
@@ -44,15 +47,15 @@ add_compile_options(
 	-Wduplicated-branches
 	-Wduplicated-cond
 	-Wextra
-	-Wformat=2
 	-Wformat-truncation
+	-Wformat=2
 	-Wlogical-op
 	-Wmissing-declarations
 	-Wnull-dereference
 	-Wpointer-arith
 	-Wredundant-decls
-	-Wsign-conversion
 	-Wshadow
+	-Wsign-conversion
 	-Wundef
 	-Wvla
 	"$<$<COMPILE_LANGUAGE:ASM>:SHELL:-x assembler-with-cpp>"
@@ -77,8 +80,8 @@ add_link_options(
 	-nocrt0
 	-Wl,--cref
 	-Wl,--gc-sections
-	-Wl,-Map=$<TARGET_PROPERTY:NAME>.map
 	-Wl,--orphan-handling=error
-	-Wl,--print-memory-usage
 	-Wl,--print-map-locals
+	-Wl,--print-memory-usage
+	-Wl,-Map=$<TARGET_PROPERTY:NAME>.map
 )

@@ -9,6 +9,7 @@
             "binaryDir": "${sourceDir}/lbuild",
             "toolchainFile": "${sourceDir}/lbuild/conan_toolchain.cmake",
             "cacheVariables": {
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
                 "CMAKE_BUILD_TYPE": "Debug"
             }
         }

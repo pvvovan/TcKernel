@@ -1,0 +1,17 @@
+{
+    "configurations": [
+        {
+            "name": "tricore",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [],
+            "cStandard": "gnu23",
+            "cppStandard": "gnu++23",
+            "compileCommands": [
+                "${workspaceFolder}/lbuild/compile_commands.json"
+            ]
+        }
+    ],
+    "version": 4
+}

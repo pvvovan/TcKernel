@@ -11,7 +11,7 @@ add_subdirectory(FreeRTOS-Port)
 add_subdirectory(FreeRTOS-Kernel)
 
 set_target_properties(freertos_kernel PROPERTIES
-	C_STANDARD		17
+	C_STANDARD		23
 	C_STANDARD_REQUIRED	ON
 	C_EXTENSIONS		OFF
 )

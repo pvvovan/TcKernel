@@ -2,7 +2,7 @@ add_library(ifx_obj OBJECT)
 add_library(IFX::ILLD ALIAS ifx_obj)
 
 set_target_properties(ifx_obj PROPERTIES
-	C_STANDARD		17
+	C_STANDARD		23
 	C_STANDARD_REQUIRED	ON
 	C_EXTENSIONS		ON
 )
