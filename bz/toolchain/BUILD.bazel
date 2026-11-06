@@ -21,7 +21,7 @@ cc_toolchain(
 )
 
 toolchain(
-    name = "cc_toolchain_for_linux_x86_64",
+    name = "cc_toolchain_for_tricore",
     toolchain = ":linux_x86_64_toolchain",
     toolchain_type = "@bazel_tools//tools/cpp:toolchain_type",
     exec_compatible_with = [

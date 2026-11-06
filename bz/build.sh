@@ -5,4 +5,4 @@ cd "${SCRIPT_DIR}"
 
 bazel=/home/vovan/Downloads/bazel-9.3.2-linux-x86_64
 
-$bazel build -s //main:my-world
+$bazel build //main:my-world
