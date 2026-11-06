@@ -13,8 +13,6 @@ load("@rules_cc//cc/toolchains:cc_toolchain_config_info.bzl", "CcToolchainConfig
 
 all_link_actions = [
     ACTION_NAMES.cpp_link_executable,
-    ACTION_NAMES.cpp_link_dynamic_library,
-    ACTION_NAMES.cpp_link_nodeps_dynamic_library,
 ]
 
 def _impl(ctx):
@@ -76,7 +74,7 @@ def _impl(ctx):
         ctx = ctx,
         features = features,
         cxx_builtin_include_directories = [
-            "/usr/include",
+            "/home/vovan/.conan2/p/b/tricofcdb7a014eeed/p/tricore-elf/include",
         ],
         toolchain_identifier = "local",
         host_system_name = "local",
