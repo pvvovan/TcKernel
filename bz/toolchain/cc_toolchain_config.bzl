@@ -81,7 +81,7 @@ def _impl(ctx):
         target_system_name = "local",
         target_cpu = "tricore",
         target_libc = "unknown",
-        compiler = "clang",
+        compiler = "gcc",
         abi_version = "unknown",
         abi_libc_version = "unknown",
         tool_paths = tool_paths,
