@@ -20,13 +20,6 @@ all_compile_actions = [
     ACTION_NAMES.cpp_compile,
 ]
 
-common_compile_options = [
-    "-fdata-sections",
-    "-ffunction-sections",
-    "-fno-common",
-    "-fstrict-volatile-bitfields",
-]
-
 def _impl(ctx):
     tool_paths = [
         tool_path(
@@ -65,6 +58,37 @@ def _impl(ctx):
 
     features = [
         feature(
+            name = "default_compile_flags",
+            enabled = True,
+            flag_sets = [
+                flag_set(
+                    actions = all_compile_actions,
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
+                                "-fdata-sections",
+                                "-ffunction-sections",
+                                "-fno-common",
+                                "-fstrict-volatile-bitfields",
+                            ]
+                        ),
+                    ]),
+                ),
+                flag_set(
+                    actions = [ACTION_NAMES.cpp_compile],
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
+                                "-fno-exceptions",
+                                "-fno-rtti",
+                                "-fno-threadsafe-statics",
+                            ],
+                        ),
+                    ]),
+                ),
+            ],
+        ),
+        feature(
             name = "default_linker_flags",
             enabled = True,
             flag_sets = [
@@ -74,6 +98,12 @@ def _impl(ctx):
                         flag_group(
                             flags = [
                                 "-lstdc++",
+                                "-nocrt0",
+                                "-Wl,--cref",
+                                "-Wl,--gc-sections",
+                                "-Wl,--orphan-handling=error",
+                                "-Wl,--print-map-locals",
+                                "-Wl,--print-memory-usage",
                             ],
                         ),
                     ]),
@@ -91,7 +121,7 @@ def _impl(ctx):
                                 "-g3",
                                 "-gdwarf-5",
                                 "-O0",
-                            ] + common_compile_options,
+                            ],
                         ),
                     ]),
                 ),
@@ -107,7 +137,7 @@ def _impl(ctx):
                             flags = [
                                 "-g0",
                                 "-O3",
-                            ] + common_compile_options,
+                            ],
                         ),
                     ]),
                 ),
