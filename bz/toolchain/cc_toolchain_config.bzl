@@ -79,7 +79,7 @@ def _impl(ctx):
         toolchain_identifier = "local",
         host_system_name = "local",
         target_system_name = "local",
-        target_cpu = "k8",
+        target_cpu = "tricore",
         target_libc = "unknown",
         compiler = "clang",
         abi_version = "unknown",
