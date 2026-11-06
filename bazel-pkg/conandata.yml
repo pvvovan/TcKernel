@@ -1,0 +1,13 @@
+sources:
+  "9.3.2":
+    license:
+      url: "https://raw.githubusercontent.com/bazelbuild/bazel/9.3.2/LICENSE"
+      sha256: "9fe6dae7684812d0117f5a0611aa773656776545797608f201fef88fa7363e0b"
+    Linux:
+      x86_64:
+        url: "https://github.com/bazelbuild/bazel/releases/download/9.3.2/bazel-9.3.2-linux-x86_64"
+        sha256: "2e14c55c298752d71e8a0bbd762665ffce5966c9ad00ec5d1a8b82a58e7bfa06"
+    Windows:
+      x86_64:
+        url: "https://github.com/bazelbuild/bazel/releases/download/9.3.2/bazel-9.3.2-windows-x86_64.exe"
+        sha256: "f395acbf1e6ffa714ef2da9e65403b0633f7cab8db2df90fe3a1ac89bab6ba2e"

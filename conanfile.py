@@ -1,6 +1,8 @@
 from conan import ConanFile
 from conan.tools.cmake import CMakeToolchain
 
+required_conan_version = ">=2.33"
+
 class TcApp(ConanFile):
 	name = "TcApp"
 	version = "0.0.1"
@@ -9,6 +11,7 @@ class TcApp(ConanFile):
 	generators = "VirtualBuildEnv", "VirtualRunEnv"
 
 	def requirements(self):
+		self.tool_requires("bazel-pkg/9.3.2@tc/gcc")
 		self.tool_requires("cmake/4.4.4")
 		self.tool_requires("ninja/1.13.2")
 		self.tool_requires("tricore-gcc/13.4.1-4@tc/gcc")
