@@ -3,6 +3,4 @@
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 cd "${SCRIPT_DIR}"
 
-bazel=/home/vovan/Downloads/bazel-9.3.2-linux-x86_64
-
-$bazel build //main:my-world
+bazel build //main:my-world --subcommands=pretty_print

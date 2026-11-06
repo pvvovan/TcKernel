@@ -15,6 +15,18 @@ all_link_actions = [
     ACTION_NAMES.cpp_link_executable,
 ]
 
+all_compile_actions = [
+    ACTION_NAMES.c_compile,
+    ACTION_NAMES.cpp_compile,
+]
+
+common_compile_options = [
+    "-fdata-sections",
+    "-ffunction-sections",
+    "-fno-common",
+    "-fstrict-volatile-bitfields",
+]
+
 def _impl(ctx):
     tool_paths = [
         tool_path(
@@ -63,6 +75,39 @@ def _impl(ctx):
                             flags = [
                                 "-lstdc++",
                             ],
+                        ),
+                    ]),
+                ),
+            ],
+        ),
+        feature(
+            name = "dbg",
+            flag_sets = [
+                flag_set(
+                    actions = all_compile_actions,
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
+                                "-g3",
+                                "-gdwarf-5",
+                                "-O0",
+                            ] + common_compile_options,
+                        ),
+                    ]),
+                ),
+            ],
+        ),
+        feature(
+            name = "opt",
+            flag_sets = [
+                flag_set(
+                    actions = all_compile_actions,
+                    flag_groups = ([
+                        flag_group(
+                            flags = [
+                                "-g0",
+                                "-O3",
+                            ] + common_compile_options,
                         ),
                     ]),
                 ),
