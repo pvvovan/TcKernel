@@ -28,7 +28,7 @@ def _impl(ctx):
         ),
         tool_path(
             name = "ld",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-ld".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "ar",
@@ -36,23 +36,23 @@ def _impl(ctx):
         ),
         tool_path(
             name = "cpp",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-cpp".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "gcov",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-gcov".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "nm",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-nm".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "objdump",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-objdump".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "strip",
-            path = "/bin/false",
+            path = "{}/bin/tricore-elf-strip".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
     ]
 
@@ -98,6 +98,7 @@ def _impl(ctx):
                         flag_group(
                             flags = [
                                 "-lstdc++",
+                                "-lm",
                                 "-nocrt0",
                                 "-Wl,--cref",
                                 "-Wl,--gc-sections",
