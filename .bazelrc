@@ -1,6 +1,8 @@
 import %workspace%/lbuild/conan.bazelrc
 
 build --compilation_mode=dbg
+build --conlyopt=-std=c17
 build --copt=-mtc162
+build --cxxopt=-std=c++23
 build --linkopt=-mtc162
 build --platforms=@tricore_gcc//:tricore_platform

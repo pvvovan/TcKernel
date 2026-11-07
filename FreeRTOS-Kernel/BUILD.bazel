@@ -1,0 +1,44 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "freertos-kernel",
+    srcs = [
+        "croutine.c",
+        "event_groups.c",
+        "list.c",
+        "portable/MemMang/heap_4.c",
+        "queue.c",
+        "stream_buffer.c",
+        "tasks.c",
+        "timers.c",
+    ],
+    hdrs = [
+        "include/atomic.h",
+        "include/croutine.h",
+        "include/deprecated_definitions.h",
+        "include/event_groups.h",
+        "include/FreeRTOS.h",
+        "include/list.h",
+        "include/message_buffer.h",
+        "include/mpu_prototypes.h",
+        "include/mpu_syscall_numbers.h",
+        "include/mpu_wrappers.h",
+        "include/newlib-freertos.h",
+        "include/picolibc-freertos.h",
+        "include/portable.h",
+        "include/projdefs.h",
+        "include/queue.h",
+        "include/semphr.h",
+        "include/stack_macros.h",
+        "include/StackMacros.h",
+        "include/stream_buffer.h",
+        "include/task.h",
+        "include/timers.h",
+    ],
+    includes = ["include"],
+    deps = [
+        "//FreeRTOS-Config:freertos-config",
+        "//FreeRTOS-Port:freertos-portmacro"
+    ],
+    visibility = ["//:__subpackages__"],
+)

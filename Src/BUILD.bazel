@@ -5,5 +5,9 @@ cc_library(
     srcs = [
         "Isr/inttab0.S",
         "Trap/traptab0.S",
+        "main.cpp"
+    ],
+    deps = [
+        "//FreeRTOS-Kernel:freertos-kernel",
     ],
 )

@@ -1,0 +1,16 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "freertos-port",
+    srcs = ["port.c"],
+    deps = ["//FreeRTOS-Kernel:freertos-kernel"],
+    visibility = ["//:__subpackages__"],
+)
+
+cc_library(
+    name = "freertos-portmacro",
+    hdrs = ["portmacro.h"],
+    includes = ["."],
+    deps = ["//FreeRTOS-Config:freertos-config"],
+    visibility = ["//:__subpackages__"],
+)

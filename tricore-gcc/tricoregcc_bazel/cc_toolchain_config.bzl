@@ -151,6 +151,7 @@ def _impl(ctx):
         features = features,
         cxx_builtin_include_directories = [
             "{}/tricore-elf/include".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
+            "{}/lib/gcc/tricore-elf/13.4.1/include".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ],
         toolchain_identifier = "local",
         host_system_name = "local",
