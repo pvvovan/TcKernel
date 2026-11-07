@@ -1,4 +1,6 @@
+import %workspace%/lbuild/conan.bazelrc
+
 build --compilation_mode=dbg
 build --copt=-mtc162
 build --linkopt=-mtc162
-build --platforms=//toolchain:tricore_platform
+build --platforms=@tricore_gcc//:tricore_platform
