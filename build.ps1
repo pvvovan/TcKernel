@@ -11,7 +11,7 @@ if ($env:VIRTUAL_ENV) {
 	conan install . --update --output-folder=lbuild --build=missing -c tools.env.virtualenv:powershell=True
 	& lbuild\conanbuild.ps1
 
-	cmake --workflow --preset=Compile
+	bazel build //Src:my-app
 
 	Pop-Location
 }

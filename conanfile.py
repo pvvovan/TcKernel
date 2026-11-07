@@ -16,7 +16,7 @@ class TcApp(ConanFile):
 		self.tool_requires("tricore-gcc/13.4.1-5@tc/gcc")
 
 	def generate(self):
-		tc_gcc_dir = self.dependencies.build["tricore-gcc"].package_folder
+		tc_gcc_dir = self.dependencies.build["tricore-gcc"].package_folder.replace("\\", "/")
 		save(self, path.join(self.generators_folder, "conan.bazelrc"),
 			f"common --override_module=tricore_gcc={tc_gcc_dir}\n" +
 			f"common --action_env=tricore_gcc_dir={tc_gcc_dir}\n"
