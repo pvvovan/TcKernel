@@ -10,6 +10,7 @@ cc_binary(
     deps = [
         "//FreeRTOS-Kernel:freertos-kernel",
         "//FreeRTOS-Port:freertos-port",
+        "//InfineonLibraries:ifx-iLLD",
     ],
     additional_linker_inputs = [
         "common.ld",

@@ -1,0 +1,27 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "ifx-iLLD",
+    srcs = [
+        "Configurations/Ifx_Cfg_Ssw.c",
+        "iLLD/TC3xx/Tricore/Pms/Std/IfxPmsEvr.c",
+        "iLLD/TC3xx/Tricore/Scu/Std/IfxScuCcu.c",
+        "iLLD/TC3xx/Tricore/Scu/Std/IfxScuWdt.c",
+        "Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Tc0.c",
+        "Infra/Ssw/TC3xx/Tricore/Ifx_Ssw_Infra.c",
+    ],
+    hdrs = glob(["**/*.h"]),
+    includes = [
+        "Configurations",
+        "iLLD/TC3xx/Tricore",
+        "iLLD/TC3xx/Tricore/_PinMap",
+        "iLLD/TC3xx/Tricore/_PinMap/TC37x",
+        "iLLD/TC3xx/Tricore/Pms/Std",
+        "iLLD/TC3xx/Tricore/Scu/Std",
+        "Infra/Platform",
+        "Infra/Sfr/TC37x",
+        "Infra/Ssw/TC3xx/Tricore",
+        "Service/CpuGeneric",
+    ],
+    visibility = ["//:__subpackages__"],
+)
