@@ -24,7 +24,7 @@ def _impl(ctx):
     tool_paths = [
         tool_path(
             name = "gcc",
-            path = "/home/vovan/.conan2/p/b/tricofcdb7a014eeed/p/bin/tricore-elf-gcc",
+            path = "{}/bin/tricore-elf-gcc".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "ld",
@@ -32,7 +32,7 @@ def _impl(ctx):
         ),
         tool_path(
             name = "ar",
-            path = "/home/vovan/.conan2/p/b/tricofcdb7a014eeed/p/bin/tricore-elf-ar",
+            path = "{}/bin/tricore-elf-ar".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ),
         tool_path(
             name = "cpp",
@@ -149,7 +149,7 @@ def _impl(ctx):
         ctx = ctx,
         features = features,
         cxx_builtin_include_directories = [
-            "/home/vovan/.conan2/p/b/tricofcdb7a014eeed/p/tricore-elf/include",
+            "{}/tricore-elf/include".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
         ],
         toolchain_identifier = "local",
         host_system_name = "local",
@@ -164,6 +164,5 @@ def _impl(ctx):
 
 cc_toolchain_config = rule(
     implementation = _impl,
-    attrs = {},
     provides = [CcToolchainConfigInfo],
 )

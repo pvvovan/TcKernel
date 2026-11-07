@@ -1,1 +1,2 @@
 common --override_module=tricore_gcc=/home/vovan/Documents/repos/TcKernel/bz/tc_gcc_dir
+common --action_env=tricore_gcc_dir=/home/vovan/.conan2/p/b/tricofcdb7a014eeed/p
