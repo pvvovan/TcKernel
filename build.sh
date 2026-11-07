@@ -2,4 +2,6 @@
 
 SCRIPT_DIR=$( cd -- "$( dirname -- "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )
 
-cd "${SCRIPT_DIR}" && cmake --workflow --preset=Compile
+cd "${SCRIPT_DIR}"
+
+bazel build //Src:my-app --subcommands=pretty_print

@@ -1,0 +1,9 @@
+load("@rules_cc//cc:cc_library.bzl", "cc_library")
+
+cc_library(
+    name = "my-app",
+    srcs = [
+        "Isr/inttab0.S",
+        "Trap/traptab0.S",
+    ],
+)

@@ -1,2 +1,4 @@
+/bazel-*
 /lbuild/
+/MODULE.bazel.lock
 pvenv/

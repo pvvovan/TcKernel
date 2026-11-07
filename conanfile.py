@@ -1,5 +1,6 @@
 from conan import ConanFile
-from conan.tools.cmake import CMakeToolchain
+from conan.tools.files import save
+from os import path
 
 required_conan_version = ">=2.33"
 
@@ -12,11 +13,11 @@ class TcApp(ConanFile):
 
 	def requirements(self):
 		self.tool_requires("bazel-pkg/9.3.2@tc/gcc")
-		self.tool_requires("cmake/4.4.4")
-		self.tool_requires("ninja/1.13.2")
-		self.tool_requires("tricore-gcc/13.4.1-4@tc/gcc")
+		self.tool_requires("tricore-gcc/13.4.1-5@tc/gcc")
 
 	def generate(self):
-		tc = CMakeToolchain(self)
-		tc.user_presets_path = False
-		tc.generate()
+		tc_gcc_dir = self.dependencies.build["tricore-gcc"].package_folder
+		save(self, path.join(self.generators_folder, "conan.bazelrc"),
+			f"common --override_module=tricore_gcc={tc_gcc_dir}\n" +
+			f"common --action_env=tricore_gcc_dir={tc_gcc_dir}\n"
+		)

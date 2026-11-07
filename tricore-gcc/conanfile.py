@@ -11,10 +11,10 @@ required_conan_version = ">=2.33"
 
 class TriCoreGccConan(ConanFile):
 	name = "tricore-gcc"
-	version = "13.4.1-4"
+	version = "13.4.1-5"
 	package_type = "application"
 	settings = "arch", "os"
-	exports = "tricoregcc.cmake"
+	exports = "tricoregcc.cmake", "tricoregcc_bazel/*"
 	zipfile = None
 
 	def validate(self):
@@ -40,6 +40,7 @@ class TriCoreGccConan(ConanFile):
 			keep_permissions = True,
 			strip_root = True if self.settings.os == "Linux" else False)
 		copy(self, "tricoregcc.cmake", self.recipe_folder, self.package_folder)
+		copy(self, "*", os.path.join(self.recipe_folder, "tricoregcc_bazel"), self.package_folder)
 
 	def package_info(self):
 		self.cpp_info.bindirs = ["bin"]
