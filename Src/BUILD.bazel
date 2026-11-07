@@ -19,5 +19,7 @@ cc_binary(
     linkopts = [
         "-L Src",
         "-T $(location myapp.ld)",
+        "-Wl,-Map=$(BINDIR)/Src/my-app.map",
+        "-Wl,--undefined=_START",
     ],
 )
