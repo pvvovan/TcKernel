@@ -1,6 +1,6 @@
-load("@rules_cc//cc:cc_library.bzl", "cc_library")
+load("@rules_cc//cc:cc_binary.bzl", "cc_binary")
 
-cc_library(
+cc_binary(
     name = "my-app",
     srcs = [
         "Isr/inttab0.S",
@@ -9,5 +9,14 @@ cc_library(
     ],
     deps = [
         "//FreeRTOS-Kernel:freertos-kernel",
+        "//FreeRTOS-Port:freertos-port",
+    ],
+    additional_linker_inputs = [
+        "common.ld",
+        "myapp.ld",
+    ],
+    linkopts = [
+        "-L Src",
+        "-T $(location myapp.ld)",
     ],
 )
