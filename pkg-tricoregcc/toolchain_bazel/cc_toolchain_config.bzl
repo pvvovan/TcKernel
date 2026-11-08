@@ -11,10 +11,6 @@ load(
 load("@rules_cc//cc/common:cc_common.bzl", "cc_common")
 load("@rules_cc//cc/toolchains:cc_toolchain_config_info.bzl", "CcToolchainConfigInfo")
 
-all_link_actions = [
-    ACTION_NAMES.cpp_link_executable,
-]
-
 all_compile_actions = [
     ACTION_NAMES.c_compile,
     ACTION_NAMES.cpp_compile,
@@ -58,7 +54,7 @@ def _impl(ctx):
 
     features = [
         feature(
-            name = "default_compile_flags",
+            name = "default_compiler_flags",
             enabled = True,
             flag_sets = [
                 flag_set(
@@ -129,7 +125,7 @@ def _impl(ctx):
             enabled = True,
             flag_sets = [
                 flag_set(
-                    actions = all_link_actions,
+                    actions = [ACTION_NAMES.cpp_link_executable],
                     flag_groups = ([
                         flag_group(
                             flags = [
@@ -141,6 +137,7 @@ def _impl(ctx):
                                 "-Wl,--orphan-handling=error",
                                 "-Wl,--print-map-locals",
                                 "-Wl,--print-memory-usage",
+                                "-Wl,-Map=%{output_execpath}.map",
                             ],
                         ),
                     ]),
@@ -185,10 +182,7 @@ def _impl(ctx):
     return cc_common.create_cc_toolchain_config_info(
         ctx = ctx,
         features = features,
-        cxx_builtin_include_directories = [
-            "{}/tricore-elf/include".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
-            "{}/lib/gcc/tricore-elf/13.4.1/include".format(ctx.configuration.default_shell_env.get("tricore_gcc_dir")),
-        ],
+        cxx_builtin_include_directories = [ctx.configuration.default_shell_env.get("tricore_gcc_dir")],
         toolchain_identifier = "local",
         host_system_name = "local",
         target_system_name = "local",

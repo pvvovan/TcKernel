@@ -11,7 +11,7 @@ required_conan_version = ">=2.33"
 
 class TriCoreGccConan(ConanFile):
 	name = "tricore-gcc"
-	version = "13.4.1-5"
+	version = "13.4.1-6"
 	package_type = "application"
 	settings = "arch", "os"
 	exports = "tricoregcc.cmake", "toolchain_bazel/*"
