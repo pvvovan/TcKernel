@@ -13,5 +13,8 @@ if ($env:VIRTUAL_ENV) {
 
 	bazel build //Src:my-app
 
+	bazel aquery --output=jsonproto 'mnemonic("CppCompile", deps(//Src:my-app))' > lbuild\protobuild.json
+	python compile_commands.py lbuild\protobuild.json lbuild\compile_commands.json
+
 	Pop-Location
 }
