@@ -13,7 +13,9 @@ if ($env:VIRTUAL_ENV) {
 
 	bazel build //Src:my-app
 
-	bazel aquery --output=jsonproto 'mnemonic("CppCompile", deps(//Src:my-app))' > lbuild\protobuild.json
+	$jsonData = bazel aquery --output=jsonproto 'mnemonic("CppCompile", deps(//Src:my-app))' | Out-String
+	$unf8NoBom = New-Object System.Text.UTF8Encoding($False)
+	[System.IO.File]::WriteAllText("lbuild\protobuild.json", $jsonData, $unf8NoBom)
 	python compile_commands.py lbuild\protobuild.json lbuild\compile_commands.json
 
 	Pop-Location
